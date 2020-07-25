@@ -57,52 +57,58 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PathNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Button.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CollisionManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Label.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FontManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="DebugManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MathManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Engine.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="EventManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="States.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="FontManager.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="StateManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Label.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="MathManager.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tile.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="PathNode.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StateManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="States.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

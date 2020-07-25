@@ -39,42 +39,15 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 	else return false; // SDL init fail.
 	// Example specific initialization.
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2"); // Call this before any textures are created.
-	m_pTileText = IMG_LoadTexture(m_pRenderer, "Img/Tiles.png");
-	m_pPlayerText = IMG_LoadTexture(m_pRenderer, "Img/Maga.png");
-	m_pPlayer = new Player({ 0,0,32,32 }, { (float)(width / 2 - 16), (float)(height / 2 - 16), 32, 32 }, m_pRenderer, m_pPlayerText, 0, 0, 0, 4);
-	ifstream inFile("Dat/Tiledata.txt");
-	if (inFile.is_open())
-	{ // Create map of Tile prototypes.
-		char key;
-		int x, y;
-		bool o, h;
-		while (!inFile.eof())
-		{
-			inFile >> key >> x >> y >> o >> h;
-			m_tiles.emplace(key, new Tile({ x * 32, y * 32, 32, 32 }, { 0,0,32,32 }, m_pRenderer, m_pTileText, o, h));
-		}
-	}
-	inFile.close();
-	inFile.open("Dat/Level1.txt");
-	if (inFile.is_open())
-	{ // Build the level from Tile prototypes.
-		char key;
-		for (int row = 0; row < ROWS; row++)
-		{
-			for (int col = 0; col < COLS; col++)
-			{
-				inFile >> key;
-				m_level[row][col] = m_tiles[key]->Clone(); // Prototype design pattern used.
-				m_level[row][col]->GetDstP()->x = (float)(32 * col);
-				m_level[row][col]->GetDstP()->y = (float)(32 * row);
-			}
-		}
-	}
-	inFile.close();
+
+	TextureManager::RegisterTexture("img/Tiles.png", "Tile");
+	TextureManager::RegisterTexture("img/Maga.png", "Player");
 	// Final engine initialization calls.
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_running = true; // Everything is okay, start the engine.
 	cout << "Engine Init success!" << endl;
+	STMA::ChangeState(new PlayState);
+
 	return true;
 }
 
@@ -98,7 +71,7 @@ void Engine::HandleEvents()
 
 void Engine::Update()
 {
-	m_pPlayer->Update();
+	STMA::Update();
 }
 
 void Engine::Render() 
@@ -106,15 +79,7 @@ void Engine::Render()
 	SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
 	SDL_RenderClear(m_pRenderer); // Clear the screen with the draw color.
 	// Draw anew.
-	for (int row = 0; row < ROWS; row++)
-	{
-		for (int col = 0; col < COLS; col++)
-		{
-			m_level[row][col]->Render();
-		}
-	}
-	m_pPlayer->Render();
-	// Flip buffers.
+	STMA::Render();
 	SDL_RenderPresent(m_pRenderer);
 }
 
@@ -130,9 +95,7 @@ void Engine::Clean()
 			m_level[row][col] = nullptr; // Wrangle your dangle.
 		}
 	}
-	for (auto const& i : m_tiles)
-		delete m_tiles[i.first];
-	m_tiles.clear();
+
 	// Finish cleaning.
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_DestroyWindow(m_pWindow);
