@@ -31,10 +31,9 @@ private: // Private properties.
 	SDL_Window* m_pWindow; // This represents the SDL window.
 	SDL_Renderer* m_pRenderer; // This represents the buffer to draw to.
 	// Example-specific properties.
-	SDL_Texture *m_pTileText, *m_pPlayerText;
-	std::map<char, Tile*> m_tiles;
+	
 	std::array<std::array<Tile*, COLS>, ROWS> m_level; // Fixed-size STL array of Tile pointers.
-	Player* m_pPlayer;
+
 
 private: // Private methods.
 	Engine();
