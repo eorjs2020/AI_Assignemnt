@@ -42,11 +42,12 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 
 	TextureManager::RegisterTexture("img/Tiles.png", "Tile");
 	TextureManager::RegisterTexture("img/Maga.png", "Player");
+	TEMA::RegisterTexture("Img/Kit.png", "Button");
 	// Final engine initialization calls.
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_running = true; // Everything is okay, start the engine.
 	cout << "Engine Init success!" << endl;
-	STMA::ChangeState(new PlayState);
+	STMA::ChangeState(new StartState);
 
 	return true;
 }

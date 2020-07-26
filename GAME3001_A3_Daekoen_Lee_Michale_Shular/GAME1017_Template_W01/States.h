@@ -5,6 +5,8 @@
 #include "Tile.h"
 #include "Player.h"
 #include <SDL.h>
+#include "Button.h"
+#include "Label.h"
 
 class State // This is the abstract base class for all specific states.
 {
@@ -33,5 +35,22 @@ public:
 	void Exit();
 	void Resume();
 };
+
+class StartState :public State
+{
+private:
+	Label* m_nameOne,* m_nameTwo;
+	Button* m_StartBtn;
+
+
+public:
+	StartState();
+	void Update();
+	void Render();
+	void Enter();
+	void Exit();
+	void Resume();
+};
+
 
 #endif

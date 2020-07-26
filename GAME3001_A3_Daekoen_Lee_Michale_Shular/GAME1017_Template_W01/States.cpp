@@ -86,3 +86,33 @@ void PlayState::Exit()
 void PlayState::Resume()
 {
 }
+
+StartState::StartState() {}
+
+void StartState::Update()
+{
+	if (m_StartBtn->Update() == 1)
+		return;
+}
+
+void StartState::Render()
+{
+	
+	m_StartBtn->Render();
+	State::Render();
+}
+
+void StartState::Enter()
+{
+	
+	m_StartBtn = new PlayButton({ 0, 0, 67, 15 }, { 380.0f, 350.0f, 268, 60},
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
+}
+
+void StartState::Exit()
+{
+}
+
+void StartState::Resume()
+{
+}

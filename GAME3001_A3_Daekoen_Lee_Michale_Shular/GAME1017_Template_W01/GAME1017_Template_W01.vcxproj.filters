@@ -127,6 +127,12 @@
     <Image Include="Img\Tiles.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Img\Kit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Img\0x72.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dat\Level1.txt">
