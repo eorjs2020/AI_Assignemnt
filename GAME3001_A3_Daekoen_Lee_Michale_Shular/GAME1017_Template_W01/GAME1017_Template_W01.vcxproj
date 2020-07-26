@@ -121,6 +121,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="DebugManager.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="FontManager.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DebugManager.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="FontManager.h" />
@@ -153,8 +155,10 @@
     <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Img\0x72.png" />
     <Image Include="img\circle.png" />
     <Image Include="Img\Enemies.png" />
+    <Image Include="Img\Kit.png" />
     <Image Include="Img\play.png" />
     <Image Include="Img\PlayerShip.png" />
     <Image Include="Img\Tiles.png" />

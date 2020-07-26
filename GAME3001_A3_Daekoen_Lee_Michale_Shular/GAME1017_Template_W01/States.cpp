@@ -6,6 +6,7 @@
 #include "TextureManager.h"
 #include "glm.hpp"
 #include "DebugManager.h"
+#include "EventManager.h"
 
 // Begin State. CTRL+M+H and CTRL+M+U to turn on/off collapsed code.
 void State::Render()
@@ -30,7 +31,7 @@ void PlayState::Enter()
 		while (!inFile.eof())
 		{
 			inFile >> key >> x >> y >> o >> h;
-			m_tiles.emplace(key, new Tile({ x * 32, y * 32, 32, 32 }, { 0,0,32,32 }, 
+			m_tiles.emplace(key, new Tile({ x * 16, y * 16, 16, 16 }, { 0,0,32,32 }, 
 				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), o, h));
 		}
 	}
@@ -58,8 +59,10 @@ void PlayState::Enter()
 	}
 	inFile.close();
 	// Final engine initialization calls.
-	m_pPlayer = new Player({ 0,0,19,26 }, { 60.0f,200.0f,46.0f,64.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Player"), 0, 0, 4, 4);
+	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,30.0f,40.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+	m_Enemy = new Enemy({ 0,88,14,21 }, { 400.0f,200.0f,30.0f,40.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 }
 void PlayState::RenderGrid()
@@ -91,7 +94,22 @@ void PlayState::SetLOS()
 }
 void PlayState::Update()
 {
+	if (EVMA::KeyPressed(SDL_SCANCODE_H)) {
+		std::cout << "Debug mode\n";
+		m_Debugmode = !m_Debugmode;
+	}
+	if (m_Debugmode) {
+		if (EVMA::KeyPressed(SDL_SCANCODE_K)) {
+			std::cout << "Damage to Enemy\n";
+		}
+		if (EVMA::KeyPressed(SDL_SCANCODE_P)) {
+			std::cout << "Patrol mode\n";
+			m_PatrolMode = !m_PatrolMode;
+		}
+	}
+
 	m_pPlayer->Update();
+	m_Enemy->Update();
 }
 
 void PlayState::Render()
@@ -107,6 +125,8 @@ void PlayState::Render()
 		}
 	}
 	m_pPlayer->Render();
+	m_Enemy->Render();
+
 	RenderGrid();
 	
 }
@@ -119,5 +139,35 @@ void PlayState::Exit()
 }
 
 void PlayState::Resume()
+{
+}
+
+StartState::StartState() {}
+
+void StartState::Update()
+{
+	if (m_StartBtn->Update() == 1)
+		return;
+}
+
+void StartState::Render()
+{
+	
+	m_StartBtn->Render();
+	State::Render();
+}
+
+void StartState::Enter()
+{
+	
+	m_StartBtn = new PlayButton({ 0, 0, 67, 15 }, { 380.0f, 350.0f, 268, 60},
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
+}
+
+void StartState::Exit()
+{
+}
+
+void StartState::Resume()
 {
 }

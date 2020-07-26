@@ -60,6 +60,9 @@
     <ClCompile Include="PathNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -110,6 +113,9 @@
     <ClInclude Include="Tile.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\circle.png">
@@ -125,6 +131,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Img\Tiles.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Img\Kit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Img\0x72.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

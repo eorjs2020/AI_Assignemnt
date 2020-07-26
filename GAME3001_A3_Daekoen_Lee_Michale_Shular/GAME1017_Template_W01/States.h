@@ -7,6 +7,9 @@
 #include <SDL.h>
 #include <vector>
 #include "PathNode.h"
+#include "Button.h"
+#include "Label.h"
+#include "Enemy.h"
 
 class State // This is the abstract base class for all specific states.
 {
@@ -28,6 +31,9 @@ private:
 	Player* m_pPlayer;
 	std::vector<PathNode*> m_pGrid;
 
+	Enemy* m_Enemy;
+	bool m_Debugmode = false, m_PatrolMode = false;
+	
 public:
 	PlayState();
 	void Update();
@@ -39,5 +45,22 @@ public:
 	void Exit();
 	void Resume();
 };
+
+class StartState :public State
+{
+private:
+	Label* m_nameOne,* m_nameTwo;
+	Button* m_StartBtn;
+
+
+public:
+	StartState();
+	void Update();
+	void Render();
+	void Enter();
+	void Exit();
+	void Resume();
+};
+
 
 #endif

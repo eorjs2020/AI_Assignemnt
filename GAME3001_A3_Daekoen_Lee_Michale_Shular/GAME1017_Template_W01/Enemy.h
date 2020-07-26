@@ -1,13 +1,13 @@
 #pragma once
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef __ENEMY__
+#define __ENEMY__
 
 #include "Sprite.h"
 
-class Player : public AnimatedSprite
+class Enemy : public AnimatedSprite
 {
 public:
-	Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
+	Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
 	void Update();
 	void Render();
 	int getHealth() { return m_health; }
@@ -22,4 +22,3 @@ private:
 };
 
 #endif
-

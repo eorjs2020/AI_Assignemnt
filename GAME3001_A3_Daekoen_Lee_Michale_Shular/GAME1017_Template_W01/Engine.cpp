@@ -40,13 +40,13 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 	// Example specific initialization.
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2"); // Call this before any textures are created.
 
-	TextureManager::RegisterTexture("img/Tiles.png", "Tile");
-	TextureManager::RegisterTexture("img/Maga.png", "Player");
+	TextureManager::RegisterTexture("img/0x72.png", "Tile");
+	TEMA::RegisterTexture("Img/Kit.png", "Button");
 	// Final engine initialization calls.
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_running = true; // Everything is okay, start the engine.
 	cout << "Engine Init success!" << endl;
-	STMA::ChangeState(new PlayState);
+	STMA::ChangeState(new StartState);
 
 	return true;
 }

@@ -15,7 +15,6 @@ public: // Public methods.
 	static void DrawRect(glm::vec2 position, int width, int height, glm::vec4 col = { 0.0f, 1.0f, 0.0f, 1.0f });
 	static void DrawRay(const SDL_Point start, const double angle, const double length, const SDL_Color col);
 	static void Quit();
-	
 private: // Private properties.
 	static std::vector<SDL_Point> s_points;
 	static std::vector<SDL_Color> s_colors;
