@@ -1,10 +1,19 @@
 #include "Player.h"
 #include "CollisionManager.h"
 #include "EventManager.h"
+#include "Engine.h"
+#include "TextureManager.h"
 #define SPEED 2
 
 Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf)
-	:AnimatedSprite(s, d, r, t, sstart, smin, smax, nf), m_state(idle), m_dir(0) {}
+	:AnimatedSprite(s, d, r, t, sstart, smin, smax, nf), m_state(idle), m_dir(0) {
+	m_health = 40;
+	m_healthBarGreen = new Sprite({ 0,25,100,9 }, { d.x,d.y - 16, 40.0, 4.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
+	m_healthBarRed = new Sprite({ 0,16,100,9 }, { d.x,d.y - 16, 40.0, 4.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
+
+}
 
 void Player::Update()
 {
@@ -25,13 +34,17 @@ void Player::Update()
 			this->setSrcP(0, 47);
 			break; // Skip movement parsing below.
 		}
+		else
+		{
+			this->setSrcP(0, 68);
+		}
 		if (EVMA::KeyHeld(SDL_SCANCODE_W))
 		{
 			if (m_dst.y > 0 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, -SPEED))
 			{
 				m_dst.y += -SPEED;
 			}
-			this->setSrcP(0, 68);
+		
 		}
 		else if (EVMA::KeyHeld(SDL_SCANCODE_S))
 		{
@@ -39,7 +52,6 @@ void Player::Update()
 			{
 				m_dst.y += SPEED;
 			}
-			this->setSrcP(0, 68);
 		}
 		if (EVMA::KeyHeld(SDL_SCANCODE_A))
 		{
@@ -48,7 +60,6 @@ void Player::Update()
 				m_dst.x += -SPEED;
 				m_dir = 1;
 			}
-			this->setSrcP(0, 68);
 		}
 		else if (EVMA::KeyHeld(SDL_SCANCODE_D))
 		{
@@ -57,16 +68,25 @@ void Player::Update()
 				m_dst.x += SPEED;
 				m_dir = 0;
 			}
-			this->setSrcP(0, 68);
 		}
 		break;
 	}
 	Animate();
+	if (EVMA::KeyPressed(SDL_SCANCODE_1))
+	{
+		setHealth(-4);
+		m_healthBarGreen->SetDstWH(getHealth(), 4);
+	}
+	m_healthBarRed->SetDstXY(this->GetDstP()->x, this->GetDstP()->y);
+	m_healthBarGreen->SetDstXY(this->GetDstP()->x, this->GetDstP()->y);
+	
 }
 
 void Player::Render()
 {
 	SDL_RenderCopyExF(m_pRend, m_pText, GetSrcP(), GetDstP(), m_angle, 0, static_cast<SDL_RendererFlip>(m_dir));
+	m_healthBarRed->Render();
+	m_healthBarGreen->Render();
 }
 
 void Player::SetState(int s)
@@ -75,11 +95,12 @@ void Player::SetState(int s)
 	m_frame = 0;
 	if (m_state == idle)
 	{
-		m_sprite = m_spriteMin = m_spriteMax = 0;
+		m_sprite = m_spriteMin = 0;
+		m_spriteMax = 3;
 	}
 	else // Only other is running for now...
 	{
-		m_sprite = m_spriteMin = 1;
-		m_spriteMax = 4;
+		m_sprite = m_spriteMin = 0;
+		m_spriteMax = 3;
 	}
 }
