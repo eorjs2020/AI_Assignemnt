@@ -22,6 +22,7 @@ void Player::Update()
 			EVMA::KeyReleased(SDL_SCANCODE_A) || EVMA::KeyReleased(SDL_SCANCODE_D))
 		{
 			SetState(idle);
+			this->setSrcP(0, 47);
 			break; // Skip movement parsing below.
 		}
 		if (EVMA::KeyHeld(SDL_SCANCODE_W))
@@ -30,6 +31,7 @@ void Player::Update()
 			{
 				m_dst.y += -SPEED;
 			}
+			this->setSrcP(0, 68);
 		}
 		else if (EVMA::KeyHeld(SDL_SCANCODE_S))
 		{
@@ -37,6 +39,7 @@ void Player::Update()
 			{
 				m_dst.y += SPEED;
 			}
+			this->setSrcP(0, 68);
 		}
 		if (EVMA::KeyHeld(SDL_SCANCODE_A))
 		{
@@ -45,6 +48,7 @@ void Player::Update()
 				m_dst.x += -SPEED;
 				m_dir = 1;
 			}
+			this->setSrcP(0, 68);
 		}
 		else if (EVMA::KeyHeld(SDL_SCANCODE_D))
 		{
@@ -53,6 +57,7 @@ void Player::Update()
 				m_dst.x += SPEED;
 				m_dir = 0;
 			}
+			this->setSrcP(0, 68);
 		}
 		break;
 	}
