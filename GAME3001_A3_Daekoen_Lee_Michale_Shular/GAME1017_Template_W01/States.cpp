@@ -61,32 +61,38 @@ void PlayState::Enter()
 		}
 	}
 	inFile.close();
+	m_buildPatrolPath();
+	m_displayPatrolPath();
 	// Final engine initialization calls.
-	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,30.0f,40.0f },
+	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
-	m_Enemy = new Enemy({ 0,88,14,21 }, { 400.0f,200.0f,30.0f,40.0f },
+	m_Enemy = new Enemy({ 0,88,14,21 }, { m_pPatrolPath[targetNode + 1]->GetPos().x, m_pPatrolPath[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+	m_Enemy->SetDstXY(m_pPatrolPath[0]->GetPos().x - 15, m_pPatrolPath[0]->GetPos().y - 16);
+	a = &m_pPatrolPath;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 }
 void PlayState::RenderGrid()
 {
-	
-	for (int row = 0; row < ROWS; ++row)
+	if (m_Debugmode)
 	{
-		for (int col = 0; col < COLS; ++col)
+		for (int row = 0; row < ROWS; ++row)
 		{
-			auto colour = (!m_pGrid[row * COLS + col]->getLOS()) ? glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+			for (int col = 0; col < COLS; ++col)
+			{
+				auto colour = (!m_pGrid[row * COLS + col]->getLOS()) ? glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
-			DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos() - glm::vec2(m_pGrid[row * COLS + col]->GetWidth() * 0.5f, 
-				m_pGrid[row * COLS + col]->GetHeight() * 0.5f),
-				32, 32);
-			DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos(),
-				5, 5, colour);
-		
+				DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos() - glm::vec2(m_pGrid[row * COLS + col]->GetWidth() * 0.5f,
+					m_pGrid[row * COLS + col]->GetHeight() * 0.5f),
+					32, 32);
+				DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos(),
+					5, 5, colour);
+
+			}
 		}
+		DEMA::DrawRect(glm::vec2(m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y),
+			m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h);
 	}
-	DEMA::DrawRect(glm::vec2(m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y),
-		m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h);
 }
 void PlayState::RenderLOS()
 {
@@ -115,6 +121,7 @@ void PlayState::Update()
 	if (m_Debugmode) {
 		if (EVMA::KeyPressed(SDL_SCANCODE_K)) {
 			std::cout << "Damage to Enemy\n";
+			m_Enemy->setHealth(-4);
 		}
 		if (EVMA::KeyPressed(SDL_SCANCODE_P)) {
 			std::cout << "Patrol mode\n";
@@ -135,6 +142,7 @@ void PlayState::Update()
 	else
 		PlayerHasLinofSight = false;
 	
+	m_Enemy->Update(m_PatrolMode, m_pPatrolPath);
 }
 
 void PlayState::Render()
@@ -174,6 +182,39 @@ void PlayState::Exit()
 
 void PlayState::Resume()
 {
+}
+
+void PlayState::m_buildPatrolPath()
+{
+	//right
+	for (auto i = 33; i < 63; i++)
+	{
+		m_pPatrolPath.push_back(m_pGrid[i]);
+	}
+	//down
+	for (auto i = 3; i < 4; i++)
+	{
+		m_pPatrolPath.push_back(m_pGrid[(i * 32 - 2)]);
+	}
+	//left
+	for (auto i = 126; i > 97; i--)
+	{
+		m_pPatrolPath.push_back(m_pGrid[i]);
+	}
+	//up
+	for (auto i = 3 ; i > 0; i--)
+	{
+		m_pPatrolPath.push_back(m_pGrid[(32 * i +1)]);
+	}
+	std::cout << "Number of Nodes: " << m_pPatrolPath.size() << std::endl;
+}
+
+void PlayState::m_displayPatrolPath()
+{
+	for (auto node : m_pPatrolPath)
+	{
+		std::cout << "(" << node->GetPos().x << ", " << node->GetPos().y << ")" << std::endl;
+	}
 }
 
 StartState::StartState() {}

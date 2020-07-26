@@ -32,9 +32,12 @@ private:
 	std::vector<PathNode*> m_pGrid;
 	std::vector<Tile*> m_pObstacle;
 	std::vector<Tile*> m_pHazrad;
+	std::vector<PathNode*> m_pPatrolPath;
 	Enemy* m_Enemy;
 	bool PlayerHasLinofSight = true;
 	bool m_Debugmode = false, m_PatrolMode = false;
+	int targetNode = 1;
+	std::vector<PathNode*> * a;
 	int LOS;
 public:
 	PlayState();
@@ -46,6 +49,8 @@ public:
 	void SetLOS();
 	void Exit();
 	void Resume();
+	void m_buildPatrolPath();
+	void m_displayPatrolPath();
 };
 
 class StartState :public State
