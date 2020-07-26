@@ -30,10 +30,10 @@ private:
 	std::map<char, Tile*> m_tiles;
 	Player* m_pPlayer;
 	std::vector<PathNode*> m_pGrid;
-
+	std::vector<PathNode*> m_pPatrolPath;
 	Enemy* m_Enemy;
 	bool m_Debugmode = false, m_PatrolMode = false;
-	
+	int targetNode = 0;
 public:
 	PlayState();
 	void Update();
@@ -44,6 +44,8 @@ public:
 	void SetLOS();
 	void Exit();
 	void Resume();
+	void m_buildPatrolPath();
+	void m_displayPatrolPath();
 };
 
 class StartState :public State

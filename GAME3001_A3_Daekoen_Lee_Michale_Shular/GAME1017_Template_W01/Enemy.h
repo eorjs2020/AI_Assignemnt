@@ -3,6 +3,7 @@
 #define __ENEMY__
 
 #include "Sprite.h"
+#include "vec2.hpp"
 
 class Enemy : public AnimatedSprite
 {
@@ -12,6 +13,17 @@ public:
 	void Render();
 	int getHealth() { return m_health; }
 	void setHealth(int a) { m_health += a; }
+	void StopX();
+	void StopY();
+	void SetAccelX(double a);
+	void SetAccelY(double a);
+	void SetX(float y);
+	void SetY(float y);
+	double GetVelX();
+	double GetVelY();
+	double getPos();
+	void setPosX(double x) { m_dst.x += x; }
+	void setPosY(double y) { m_dst.y += y; }
 private:
 	enum state { idle, running } m_state;
 	bool m_dir;
@@ -19,6 +31,13 @@ private:
 	int m_health;
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
+	double m_accelX,
+		m_accelY,
+		m_velX,
+		m_maxVelX,
+		m_velY,
+		m_maxVelY;
+	glm::vec2 m_ePos;
 };
 
 #endif

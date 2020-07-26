@@ -11,10 +11,17 @@ Enemy::Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstar
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
 	m_healthBarRed = new Sprite({ 0,16,100,9 }, { d.x,d.y - 16, 40.0, 4.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
+	m_accelX = m_accelY = m_velX = m_velY = 0.0;
+	m_maxVelX = 5.0;
+	m_ePos.x = m_dst.x;
+	m_ePos.y = m_dst.y;
+
 }
 
 void Enemy::Update()
 {
+	
+
 	switch (m_state)
 	{
 	case idle:
@@ -33,6 +40,19 @@ void Enemy::Render()
 	m_healthBarRed->Render();
 	m_healthBarGreen->Render();
 }
+
+void Enemy::StopX() { m_velX = 0.0; }
+void Enemy::StopY() { m_velY = 0.0; }
+void Enemy::SetAccelX(double a) { m_accelX = a; }
+void Enemy::SetAccelY(double a) { m_accelY = a; }
+double Enemy::GetVelX() { return m_velX; }
+double Enemy::GetVelY() { return m_velY; }
+glm::vec2 Enemy::getPos()
+{
+	return m_ePos;
+}
+void Enemy::SetX(float y) { m_dst.x = y; }
+void Enemy::SetY(float y) { m_dst.y = y; }
 
 void Enemy::SetState(int s)
 {
