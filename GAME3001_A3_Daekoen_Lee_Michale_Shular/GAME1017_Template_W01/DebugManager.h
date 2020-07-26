@@ -4,7 +4,7 @@
 
 #include <vector>
 #include "SDL.h"
-
+ 
 class DebugManager
 {
 public: // Public methods.
@@ -14,6 +14,7 @@ public: // Public methods.
 	static void FlushLines();
 	static void DrawRay(const SDL_Point start, const double angle, const double length, const SDL_Color col);
 	static void Quit();
+
 private: // Private properties.
 	static std::vector<SDL_Point> s_points;
 	static std::vector<SDL_Color> s_colors;

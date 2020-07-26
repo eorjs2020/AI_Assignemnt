@@ -53,6 +53,8 @@ void PlayState::Enter()
 	// Final engine initialization calls.
 	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,30.0f,40.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+	m_Enemy = new Enemy({ 0,88,14,21 }, { 400.0f,200.0f,30.0f,40.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 
 }
 void PlayState::Update()
@@ -60,7 +62,6 @@ void PlayState::Update()
 	if (EVMA::KeyPressed(SDL_SCANCODE_H)) {
 		std::cout << "Debug mode\n";
 		m_Debugmode = !m_Debugmode;
-	
 	}
 	if (m_Debugmode) {
 		if (EVMA::KeyPressed(SDL_SCANCODE_K)) {
@@ -73,6 +74,7 @@ void PlayState::Update()
 	}
 
 	m_pPlayer->Update();
+	m_Enemy->Update();
 }
 
 void PlayState::Render()
@@ -88,7 +90,7 @@ void PlayState::Render()
 		}
 	}
 	m_pPlayer->Render();
-	
+	m_Enemy->Render();
 
 }
 

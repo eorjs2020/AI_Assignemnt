@@ -7,6 +7,7 @@
 #include <SDL.h>
 #include "Button.h"
 #include "Label.h"
+#include "Enemy.h"
 
 class State // This is the abstract base class for all specific states.
 {
@@ -26,6 +27,7 @@ class PlayState :public State
 private:
 	std::map<char, Tile*> m_tiles;
 	Player* m_pPlayer;
+	Enemy* m_Enemy;
 	bool m_Debugmode = false, m_PatrolMode = false;
 	
 public:
