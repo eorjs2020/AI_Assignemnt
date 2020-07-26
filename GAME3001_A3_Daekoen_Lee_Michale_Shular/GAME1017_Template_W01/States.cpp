@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include "TextureManager.h"
+#include "glm.hpp"
+#include "DebugManager.h"
 
 // Begin State. CTRL+M+H and CTRL+M+U to turn on/off collapsed code.
 void State::Render()
@@ -41,10 +43,16 @@ void PlayState::Enter()
 		{
 			for (int col = 0; col < COLS; col++)
 			{
+				
 				inFile >> key;
 				Engine::Instance().GetLevel()[row][col] = m_tiles[key]->Clone(); // Prototype design pattern used.
 				Engine::Instance().GetLevel()[row][col]->GetDstP()->x = (float)(32 * col);
 				Engine::Instance().GetLevel()[row][col]->GetDstP()->y = (float)(32 * row);
+				PathNode* temp = new PathNode(Engine::Instance().GetLevel()[row][col]->GetDstP()->x + 16, Engine::Instance().GetLevel()[row][col]->GetDstP()->y + 16,
+					Engine::Instance().GetLevel()[row][col]->GetDstP()->w, Engine::Instance().GetLevel()[row][col]->GetDstP()->h);
+				m_pGrid.push_back(temp);
+				
+				
 			}
 		}
 	}
@@ -52,7 +60,34 @@ void PlayState::Enter()
 	// Final engine initialization calls.
 	m_pPlayer = new Player({ 0,0,19,26 }, { 60.0f,200.0f,46.0f,64.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Player"), 0, 0, 4, 4);
+	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
+}
+void PlayState::RenderGrid()
+{
+	
+	for (int row = 0; row < ROWS; ++row)
+	{
+		for (int col = 0; col < COLS; ++col)
+		{
+			auto colour = (!m_pGrid[row * COLS + col]->getLOS()) ? glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
+			DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos() - glm::vec2(m_pGrid[row * COLS + col]->GetWidth() * 0.5f, 
+				m_pGrid[row * COLS + col]->GetHeight() * 0.5f),
+				32, 32);
+			DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos(),
+				5, 5, colour);
+		
+		}
+	}
+	DEMA::DrawRect(glm::vec2(m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y),
+		m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h);
+}
+void PlayState::RenderLOS()
+{
+
+}
+void PlayState::SetLOS()
+{
 }
 void PlayState::Update()
 {
@@ -72,8 +107,8 @@ void PlayState::Render()
 		}
 	}
 	m_pPlayer->Render();
+	RenderGrid();
 	
-
 }
 
 void PlayState::Exit()

@@ -5,6 +5,8 @@
 #include "Tile.h"
 #include "Player.h"
 #include <SDL.h>
+#include <vector>
+#include "PathNode.h"
 
 class State // This is the abstract base class for all specific states.
 {
@@ -24,12 +26,16 @@ class PlayState :public State
 private:
 	std::map<char, Tile*> m_tiles;
 	Player* m_pPlayer;
-	
+	std::vector<PathNode*> m_pGrid;
+
 public:
 	PlayState();
 	void Update();
 	void Render();
 	void Enter();
+	void RenderGrid();
+	void RenderLOS();
+	void SetLOS();
 	void Exit();
 	void Resume();
 };
