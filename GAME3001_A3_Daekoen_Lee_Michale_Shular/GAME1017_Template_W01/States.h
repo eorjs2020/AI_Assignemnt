@@ -26,6 +26,7 @@ class PlayState :public State
 private:
 	std::map<char, Tile*> m_tiles;
 	Player* m_pPlayer;
+	bool m_Debugmode = false, m_PatrolMode = false;
 	
 public:
 	PlayState();

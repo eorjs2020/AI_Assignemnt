@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include "TextureManager.h"
+#include "EventManager.h"
 
 // Begin State. CTRL+M+H and CTRL+M+U to turn on/off collapsed code.
 void State::Render()
@@ -56,6 +57,21 @@ void PlayState::Enter()
 }
 void PlayState::Update()
 {
+	if (EVMA::KeyPressed(SDL_SCANCODE_H)) {
+		std::cout << "Debug mode\n";
+		m_Debugmode = !m_Debugmode;
+	
+	}
+	if (m_Debugmode) {
+		if (EVMA::KeyPressed(SDL_SCANCODE_K)) {
+			std::cout << "Damage to Enemy\n";
+		}
+		if (EVMA::KeyPressed(SDL_SCANCODE_P)) {
+			std::cout << "Patrol mode\n";
+			m_PatrolMode = !m_PatrolMode;
+		}
+	}
+
 	m_pPlayer->Update();
 }
 
