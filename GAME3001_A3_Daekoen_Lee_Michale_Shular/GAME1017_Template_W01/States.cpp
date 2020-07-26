@@ -66,6 +66,7 @@ void PlayState::Enter()
 	m_Enemy = new Enemy({ 0,88,14,21 }, { m_pPatrolPath[targetNode + 1]->GetPos().x, m_pPatrolPath[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 	m_Enemy->SetDstXY(m_pPatrolPath[0]->GetPos().x - 15, m_pPatrolPath[0]->GetPos().y - 16);
+	a = &m_pPatrolPath;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 }
 void PlayState::RenderGrid()
@@ -115,35 +116,7 @@ void PlayState::Update()
 	}
 
 	m_pPlayer->Update();
-	
-	
-	if (m_PatrolMode) 
-	{
-		if (m_Enemy->getPos().x < m_pPatrolPath[targetNode + 1]->GetPos().x) {
-			m_Enemy->setPosX(+1);
-		}
-		if (m_Enemy->getPos().x > m_pPatrolPath[targetNode + 1]->GetPos().x) {
-			m_Enemy->setPosX(-1);
-		}
-		if (m_Enemy->getPos().y < m_pPatrolPath[targetNode + 1]->GetPos().y) {
-			m_Enemy->setPosY(+1);
-		}
-		if (m_Enemy->getPos().y > m_pPatrolPath[targetNode + 1]->GetPos().y) {
-			m_Enemy->setPosY(-1);
-		}
-
-		if (m_Enemy->getPos().x == m_pPatrolPath[targetNode + 1]->GetPos().x && m_Enemy->getPos().y == m_pPatrolPath[targetNode + 1]->GetPos().y)
-		{
-			++targetNode;
-			if (targetNode >= 30)
-				targetNode = 0;
-		}
-		else
-		{
-			std::cout << m_Enemy->getPos().x;
-		}
-	}
-	m_Enemy->Update();
+	m_Enemy->Update(m_PatrolMode, m_pPatrolPath);
 }
 
 void PlayState::Render()
@@ -184,21 +157,21 @@ void PlayState::m_buildPatrolPath()
 		m_pPatrolPath.push_back(m_pGrid[i]);
 	}
 	//down
-	for (auto i = 2; i < 4; i++)
+	for (auto i = 3; i < 4; i++)
 	{
-		m_pPatrolPath.push_back(m_pGrid[(32-1) * i]);
+		m_pPatrolPath.push_back(m_pGrid[(i * 32 - 2)]);
 	}
 	//left
-	for (auto i = 127; i > 97; i--)
+	for (auto i = 126; i > 97; i--)
 	{
 		m_pPatrolPath.push_back(m_pGrid[i]);
 	}
 	//up
 	for (auto i = 3 ; i > 0; i--)
 	{
-		m_pPatrolPath.push_back(m_pGrid[(32+1) * i]);
+		m_pPatrolPath.push_back(m_pGrid[(32 * i +1)]);
 	}
-	
+	std::cout << "Number of Nodes: " << m_pPatrolPath.size() << std::endl;
 }
 
 void PlayState::m_displayPatrolPath()

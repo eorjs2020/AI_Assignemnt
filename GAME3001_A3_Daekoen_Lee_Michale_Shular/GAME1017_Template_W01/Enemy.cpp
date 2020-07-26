@@ -18,9 +18,30 @@ Enemy::Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstar
 
 }
 
-void Enemy::Update()
+void Enemy::Update(bool a, std::vector<PathNode*> b)
 {
+	if (a)
+	{
+		if (this->m_dst.x < (b[m_targetnode]->GetPos().x - 16)) {
+			++m_dst.x;
+		}
+		if (this->m_dst.x > (b[m_targetnode]->GetPos().x - 16)) {
+			--m_dst.x;
+		}
+		if (this->m_dst.y < (b[m_targetnode]->GetPos().y - 16)) {
+			++m_dst.y;
+		}
+		if (this->m_dst.y > (b[m_targetnode]->GetPos().y - 16)) {
+			--m_dst.y;
+		}
+		if (this->m_dst.x == (b[m_targetnode]->GetPos().x - 16) && this->m_dst.y == (b[m_targetnode]->GetPos().y - 16)){
+			if (m_targetnode == 62)
+				m_targetnode = 0;
+			++m_targetnode;
+			
+		}
 
+	}
 	switch (m_state)
 	{
 	case idle:

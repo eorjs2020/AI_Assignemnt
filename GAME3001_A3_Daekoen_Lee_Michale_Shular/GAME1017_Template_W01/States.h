@@ -33,7 +33,8 @@ private:
 	std::vector<PathNode*> m_pPatrolPath;
 	Enemy* m_Enemy;
 	bool m_Debugmode = false, m_PatrolMode = false;
-	int targetNode = 0;
+	int targetNode = 1;
+	std::vector<PathNode*> * a;
 public:
 	PlayState();
 	void Update();
