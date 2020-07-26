@@ -72,6 +72,15 @@ void Player::Update()
 		break;
 	}
 	Animate();
+	if (EVMA::KeyPressed(SDL_SCANCODE_SPACE))
+	{
+		m_attack = !m_attack;
+		if (m_dir == 0) {
+			m_sword = new AnimatedSprite({ 0, 109, 30, 12 }, { m_dst.x - 12, m_dst.y - 16, 30.0f, 12.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 0, 10);
+		}
+	}
+
 	if (EVMA::KeyPressed(SDL_SCANCODE_1))
 	{
 		setHealth(-4);
@@ -87,6 +96,10 @@ void Player::Render()
 	SDL_RenderCopyExF(m_pRend, m_pText, GetSrcP(), GetDstP(), m_angle, 0, static_cast<SDL_RendererFlip>(m_dir));
 	m_healthBarRed->Render();
 	m_healthBarGreen->Render();
+	if (m_attack)
+	{
+		m_sword->Render();
+	}
 }
 
 void Player::SetState(int s)

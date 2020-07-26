@@ -14,11 +14,13 @@ public:
 	void setHealth(int a) { m_health += a; }
 private:
 	enum state { idle, running } m_state;
-	bool m_dir;
+	bool m_dir, m_attack= false;
 	void SetState(int s);
 	int m_health;
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
+	AnimatedSprite* m_sword;
+
 };
 
 #endif
