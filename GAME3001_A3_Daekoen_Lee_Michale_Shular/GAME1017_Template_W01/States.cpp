@@ -28,7 +28,7 @@ void PlayState::Enter()
 		while (!inFile.eof())
 		{
 			inFile >> key >> x >> y >> o >> h;
-			m_tiles.emplace(key, new Tile({ x * 32, y * 32, 32, 32 }, { 0,0,32,32 }, 
+			m_tiles.emplace(key, new Tile({ x * 16, y * 16, 16, 16 }, { 0,0,32,32 }, 
 				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), o, h));
 		}
 	}
@@ -50,8 +50,8 @@ void PlayState::Enter()
 	}
 	inFile.close();
 	// Final engine initialization calls.
-	m_pPlayer = new Player({ 0,0,19,26 }, { 60.0f,200.0f,46.0f,64.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Player"), 0, 0, 4, 4);
+	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,30.0f,40.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 
 }
 void PlayState::Update()

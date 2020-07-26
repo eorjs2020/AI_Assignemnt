@@ -152,8 +152,10 @@
     <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Img\0x72.png" />
     <Image Include="img\circle.png" />
     <Image Include="Img\Enemies.png" />
+    <Image Include="Img\Kit.png" />
     <Image Include="Img\play.png" />
     <Image Include="Img\PlayerShip.png" />
     <Image Include="Img\Tiles.png" />
