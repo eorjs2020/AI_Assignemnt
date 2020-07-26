@@ -13,8 +13,7 @@ class Enemy : public AnimatedSprite
 {
 public:
 	Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
-	void Update(Player* player);
-	void Update(bool a, std::vector<PathNode*> b);
+	void Update(Player* player, bool a, std::vector<PathNode*> b);
 	void Render();
 	int getHealth() { return m_health; }
 	void setHealth(int a) { m_health += a; }

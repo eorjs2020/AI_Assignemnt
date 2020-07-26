@@ -134,15 +134,15 @@ void PlayState::Update()
 		if(!COMA::LOSCheck(m_pPlayer, m_Enemy, m_pObstacle[i]));
 			++LOS;
 	}
-		
+	
 	m_pPlayer->Update();
-	m_Enemy->Update(m_pPlayer);
+	m_Enemy->Update(m_pPlayer, m_PatrolMode, m_pPatrolPath);
 	if (LOS == 0)
 		PlayerHasLinofSight = true;
 	else
 		PlayerHasLinofSight = false;
 	
-	m_Enemy->Update(m_PatrolMode, m_pPatrolPath);
+	
 }
 
 void PlayState::Render()

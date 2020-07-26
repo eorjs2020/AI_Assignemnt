@@ -20,8 +20,8 @@ Enemy::Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstar
 }
 
 
-void Enemy::Update(Player* player)
-void Enemy::Update(bool a, std::vector<PathNode*> b)
+
+void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 {
 	dx = dy = 0.0f;
 	m_rSearch.x = (m_dst.x + m_dst.w /2) - 100 ;
