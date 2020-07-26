@@ -72,12 +72,26 @@ void Player::Update()
 		break;
 	}
 	Animate();
-	if (EVMA::KeyPressed(SDL_SCANCODE_SPACE))
+	if (EVMA::KeyPressed(SDL_SCANCODE_SPACE) && !m_attack)
 	{
-		m_attack = !m_attack;
-		if (m_dir == 0) {
-			m_sword = new AnimatedSprite({ 0, 109, 30, 12 }, { m_dst.x - 12, m_dst.y - 16, 30.0f, 12.0f },
-				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 0, 10);
+		m_attack = !m_attack;	
+		m_sword = new AnimatedSprite({ 0, 109, 30, 12 }, { m_dst.x + 16, m_dst.y + 16, 30.0f, 12.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 0, 10);		
+	}
+	if (m_attack) {
+		
+		if (m_dir == 1) {
+			m_sword->SetDstXY(this->GetDstP()->x - 16, this->GetDstP()->y+ 16);
+			m_sword->SetFilp(SDL_FLIP_HORIZONTAL);
+		}
+		else{
+			m_sword->SetDstXY(this->GetDstP()->x + 16, this->GetDstP()->y + 16);
+		}
+		++m_attackTimer;
+		if (m_attackTimer >= 10) {
+			m_attack = !m_attack;
+			m_attackTimer = 0;
+			m_sword = nullptr;
 		}
 	}
 
@@ -96,7 +110,7 @@ void Player::Render()
 	SDL_RenderCopyExF(m_pRend, m_pText, GetSrcP(), GetDstP(), m_angle, 0, static_cast<SDL_RendererFlip>(m_dir));
 	m_healthBarRed->Render();
 	m_healthBarGreen->Render();
-	if (m_attack)
+	if (m_sword != nullptr)
 	{
 		m_sword->Render();
 	}
