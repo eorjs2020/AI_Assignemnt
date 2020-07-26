@@ -9,7 +9,7 @@ class DebugManager
 {
 public: // Public methods.
 	static int s_debugMode;
-	static void DrawLine(const SDL_Point start, const SDL_Point end, const SDL_Color col);
+	static void DrawLine(const SDL_Point start, const SDL_Point end, SDL_Color col);
 	static void QueueLine(const SDL_Point start, const SDL_Point end, const SDL_Color col);
 	static void FlushLines();
 	static void DrawRect(glm::vec2 position, int width, int height, glm::vec4 col = { 0.0f, 1.0f, 0.0f, 1.0f });

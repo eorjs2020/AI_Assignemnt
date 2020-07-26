@@ -7,6 +7,7 @@
 #include "glm.hpp"
 #include "DebugManager.h"
 #include "EventManager.h"
+#include "CollisionManager.h"
 
 // Begin State. CTRL+M+H and CTRL+M+U to turn on/off collapsed code.
 void State::Render()
@@ -52,8 +53,10 @@ void PlayState::Enter()
 				PathNode* temp = new PathNode(Engine::Instance().GetLevel()[row][col]->GetDstP()->x + 16, Engine::Instance().GetLevel()[row][col]->GetDstP()->y + 16,
 					Engine::Instance().GetLevel()[row][col]->GetDstP()->w, Engine::Instance().GetLevel()[row][col]->GetDstP()->h);
 				m_pGrid.push_back(temp);
-				
-				
+				if (Engine::Instance().GetLevel()[row][col]->IsObstacle())
+					m_pObstacle.push_back(Engine::Instance().GetLevel()[row][col]);
+				else if (Engine::Instance().GetLevel()[row][col]->IsHazard())
+					m_pHazrad.push_back(Engine::Instance().GetLevel()[row][col]);
 			}
 		}
 	}
@@ -87,6 +90,17 @@ void PlayState::RenderGrid()
 }
 void PlayState::RenderLOS()
 {
+	for (auto node : m_pGrid)
+	{
+		if (!node->getLOS())
+		{
+			auto colour = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+
+			DEMA::DrawLine({ int(node->GetPos().x), int(node->GetPos().y) }, { int(m_pPlayer->GetDstP()->x + m_pPlayer->GetDstP()->w/2) ,int(m_pPlayer->GetDstP()->y + m_pPlayer->GetDstP()->h / 2) },
+				{Uint8(colour.r), Uint8(colour.g), Uint8(colour.b), Uint8(colour.a)});
+		}
+
+	}
 
 }
 void PlayState::SetLOS()
@@ -107,9 +121,20 @@ void PlayState::Update()
 			m_PatrolMode = !m_PatrolMode;
 		}
 	}
-
+	LOS = 0;
+	for (auto i = 0; i < m_pObstacle.size(); ++i)
+	{
+		if(!COMA::LOSCheck(m_pPlayer, m_Enemy, m_pObstacle[i]));
+			++LOS;
+	}
+		
 	m_pPlayer->Update();
-	m_Enemy->Update();
+	m_Enemy->Update(m_pPlayer);
+	if (LOS == 0)
+		PlayerHasLinofSight = true;
+	else
+		PlayerHasLinofSight = false;
+	
 }
 
 void PlayState::Render()
@@ -126,8 +151,17 @@ void PlayState::Render()
 	}
 	m_pPlayer->Render();
 	m_Enemy->Render();
-
-	RenderGrid();
+	if (m_Debugmode)
+	{
+		RenderGrid();
+		auto LOSColour = (!PlayerHasLinofSight) ? glm::vec4(255.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 255.0f, 0.0f, 1.0f);
+		
+		DEMA::DrawLine({ int(m_pPlayer->GetDstP()->x + m_pPlayer->GetDstP()->w / 2), int(m_pPlayer->GetDstP()->y + m_pPlayer->GetDstP()->h / 2)},
+			{ int(m_Enemy->GetDstP()->x + m_Enemy->GetDstP()->w /2), int(m_Enemy->GetDstP()->y + m_Enemy->GetDstP()->h/2) }, 
+			{ Uint8(LOSColour.r), Uint8(LOSColour.g), Uint8(LOSColour.b), Uint8(LOSColour.a) });
+		m_Enemy->RenderRadius(100, m_Enemy->GetDstP()->x + m_Enemy->GetDstP()->w / 2, m_Enemy->GetDstP()->y + m_Enemy->GetDstP()->h / 2);
+	}
+	//RenderLOS();
 	
 }
 

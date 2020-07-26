@@ -30,10 +30,12 @@ private:
 	std::map<char, Tile*> m_tiles;
 	Player* m_pPlayer;
 	std::vector<PathNode*> m_pGrid;
-
+	std::vector<Tile*> m_pObstacle;
+	std::vector<Tile*> m_pHazrad;
 	Enemy* m_Enemy;
+	bool PlayerHasLinofSight = true;
 	bool m_Debugmode = false, m_PatrolMode = false;
-	
+	int LOS;
 public:
 	PlayState();
 	void Update();
