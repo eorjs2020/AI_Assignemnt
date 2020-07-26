@@ -2,7 +2,7 @@
 #include "MathManager.h"
 #include "Engine.h"
 
-void DebugManager::DrawLine(const SDL_Point start, const SDL_Point end, const SDL_Color col)
+void DebugManager::DrawLine(const SDL_Point start, const SDL_Point end, SDL_Color col)
 {
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), col.r, col.g, col.b, col.a);
 	SDL_RenderDrawLine(Engine::Instance().GetRenderer(), end.x, end.y, start.x, start.y);
