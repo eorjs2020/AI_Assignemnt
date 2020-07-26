@@ -129,12 +129,12 @@ void PlayState::Update()
 	}
 		
 	m_pPlayer->Update();
-	m_Enemy->Update();
+	m_Enemy->Update(m_pPlayer);
 	if (LOS == 0)
 		PlayerHasLinofSight = true;
 	else
 		PlayerHasLinofSight = false;
-	std::cout << LOS << std::endl;
+	
 }
 
 void PlayState::Render()
@@ -159,9 +159,10 @@ void PlayState::Render()
 		DEMA::DrawLine({ int(m_pPlayer->GetDstP()->x + m_pPlayer->GetDstP()->w / 2), int(m_pPlayer->GetDstP()->y + m_pPlayer->GetDstP()->h / 2)},
 			{ int(m_Enemy->GetDstP()->x + m_Enemy->GetDstP()->w /2), int(m_Enemy->GetDstP()->y + m_Enemy->GetDstP()->h/2) }, 
 			{ Uint8(LOSColour.r), Uint8(LOSColour.g), Uint8(LOSColour.b), Uint8(LOSColour.a) });
-
+		m_Enemy->RenderRadius(100, m_Enemy->GetDstP()->x + m_Enemy->GetDstP()->w / 2, m_Enemy->GetDstP()->y + m_Enemy->GetDstP()->h / 2);
 	}
 	//RenderLOS();
+	
 }
 
 void PlayState::Exit()
