@@ -15,11 +15,32 @@ void DebugManager::QueueLine(const SDL_Point start, const SDL_Point end, const S
 	s_colors.push_back(col);
 }
 
+
 void DebugManager::FlushLines()
 {
 	for (unsigned i = 0, j = 0; i < s_points.size(); i+=2, j++)
 		DrawLine(s_points[i], s_points[i+1], s_colors[j]);
 	Quit(); // Clears out vectors.
+}
+
+void DebugManager::DrawRect(glm::vec2 position, int width, int height, glm::vec4 colour)
+{
+	int r = floor(colour.r * 255.0f);
+	int g = floor(colour.g * 255.0f);
+	int b = floor(colour.b * 255.0f);
+	int a = floor(colour.a * 255.0f);
+
+	SDL_Rect rectangle;
+	rectangle.x = position.x;
+	rectangle.y = position.y;
+	rectangle.w = width;
+	rectangle.h = height;
+
+	const auto renderer = /* TheGame::Instance()->getRenderer()*/ Engine::Instance().GetRenderer();
+
+	SDL_SetRenderDrawColor(renderer, r, g, b, a);
+	SDL_RenderDrawRect(renderer, &rectangle);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
 void DebugManager::DrawRay(const SDL_Point start, const double angle, const double length, const SDL_Color col)
