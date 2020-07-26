@@ -20,7 +20,6 @@ Enemy::Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstar
 
 void Enemy::Update()
 {
-	
 
 	switch (m_state)
 	{

@@ -21,7 +21,8 @@ public:
 	void SetY(float y);
 	double GetVelX();
 	double GetVelY();
-	double getPos();
+	glm::vec2 getVel() { return m_Vel; }
+	glm::vec2 getPos();
 	void setPosX(double x) { m_dst.x += x; }
 	void setPosY(double y) { m_dst.y += y; }
 private:
@@ -38,6 +39,7 @@ private:
 		m_velY,
 		m_maxVelY;
 	glm::vec2 m_ePos;
+	glm::vec2 m_Vel;
 };
 
 #endif

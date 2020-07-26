@@ -61,9 +61,9 @@ void PlayState::Enter()
 	m_buildPatrolPath();
 	m_displayPatrolPath();
 	// Final engine initialization calls.
-	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,30.0f,40.0f },
+	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
-	m_Enemy = new Enemy({ 0,88,14,21 }, { 400.0f,200.0f,30.0f,32.0f },
+	m_Enemy = new Enemy({ 0,88,14,21 }, { m_pPatrolPath[targetNode + 1]->GetPos().x, m_pPatrolPath[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 	m_Enemy->SetDstXY(m_pPatrolPath[0]->GetPos().x - 15, m_pPatrolPath[0]->GetPos().y - 16);
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
@@ -117,18 +117,19 @@ void PlayState::Update()
 	m_pPlayer->Update();
 	
 	
-	if (m_PatrolMode) {
+	if (m_PatrolMode) 
+	{
 		if (m_Enemy->getPos().x < m_pPatrolPath[targetNode + 1]->GetPos().x) {
-			m_Enemy->setPosX(-1);
+			m_Enemy->setPosX(+1);
 		}
 		if (m_Enemy->getPos().x > m_pPatrolPath[targetNode + 1]->GetPos().x) {
-			m_Enemy->setPosX(1);
+			m_Enemy->setPosX(-1);
 		}
 		if (m_Enemy->getPos().y < m_pPatrolPath[targetNode + 1]->GetPos().y) {
-			m_Enemy->setPosY(-1);
+			m_Enemy->setPosY(+1);
 		}
 		if (m_Enemy->getPos().y > m_pPatrolPath[targetNode + 1]->GetPos().y) {
-			m_Enemy->setPosY(1);
+			m_Enemy->setPosY(-1);
 		}
 
 		if (m_Enemy->getPos().x == m_pPatrolPath[targetNode + 1]->GetPos().x && m_Enemy->getPos().y == m_pPatrolPath[targetNode + 1]->GetPos().y)
