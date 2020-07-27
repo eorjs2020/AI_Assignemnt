@@ -8,6 +8,8 @@
 #include "EventManager.h"
 #include "CollisionManager.h"
 #include "Utility.h"
+#include "SoundManager.h"
+
 
 // Begin State. CTRL+M+H and CTRL+M+U to turn on/off collapsed code.
 void State::Render()
@@ -94,6 +96,11 @@ void PlayState::Enter()
 		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 2 + 1, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 8 + 7 });
 
 	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
+
+	SOMA::SetSoundVolume(30);
+	SOMA::SetMusicVolume(15);
+	SOMA::Load("Aud/Turtles.mp3", "BGM", SOUND_MUSIC);
+	SOMA::PlayMusic("BGM");
 }
 void PlayState::RenderGrid()
 {
@@ -142,7 +149,7 @@ void PlayState::SetLOS()
 void PlayState::Update()
 {
 	if (EVMA::MousePressed(3) && m_bCanShoot)
-	{
+	{				
 		m_bCanShoot = false;
 		int x, y;
 		SDL_GetMouseState(&x, &y);
@@ -150,6 +157,7 @@ void PlayState::Update()
 		m_pMousePos.y = y;
 		m_pPlayerBullet.push_back(new Bullet({ 0,126,14,6 }, { m_pPlayer->GetDstP()->x ,m_pPlayer->GetDstP()->y , 14, 6 }, 
 			Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 10, m_pMousePos));
+		SOMA::PlaySound("laser");
 	}
 	if (EVMA::MouseReleased(3))
 	{
@@ -301,8 +309,7 @@ void PlayState::CheckCollision()
 			SDL_Rect e = { m_Enemy[j]->GetDstP()->x, m_Enemy[j]->GetDstP()->y, 32, 32 };
 			if (SDL_HasIntersection(&b, &e))
 			{
-				
-				
+				m_Enemy[j]->setHealth(-4);
 				delete m_pPlayerBullet[i];
 				m_pPlayerBullet[i] = nullptr;
 				m_bPBNull = true;
@@ -387,9 +394,11 @@ void StartState::Update()
 
 void StartState::Render()
 {
-	
+	SDL_RenderClear(Engine::Instance().GetRenderer());
 	m_StartBtn->Render();
 	State::Render();
+	m_nameOne->Render();
+	m_nameTwo->Render();
 }
 
 void StartState::Enter()
@@ -397,6 +406,9 @@ void StartState::Enter()
 	
 	m_StartBtn = new PlayButton({ 0, 0, 67, 15 }, { 380.0f, 350.0f, 268, 60},
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
+	std::string c = "Michael Shular 101273089", d = "Daekoen Lee 101076401";
+	m_nameOne = new Label("tile", 420, 180, c, { 255, 255, 255, 255 });
+	m_nameTwo = new Label("tile", 420, 140, d, { 255, 255, 255, 255 });
 }
 
 void StartState::Exit()

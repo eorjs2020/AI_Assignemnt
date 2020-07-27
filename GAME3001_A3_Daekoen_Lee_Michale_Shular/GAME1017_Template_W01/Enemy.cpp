@@ -3,6 +3,7 @@
 #include "EventManager.h"
 #include "Engine.h"
 #include "TextureManager.h"
+#include "SoundManager.h"
 
 Enemy::Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf)
 	:AnimatedSprite(s, d, r, t, sstart, smin, smax, nf), m_state(idle), m_dir(0) {
@@ -16,7 +17,7 @@ Enemy::Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstar
 	m_maxVelX = 5.0;
 	m_ePos.x = m_dst.x;
 	m_ePos.y = m_dst.y;
-
+	alarm = 0;
 }
 
 Enemy::~Enemy()
@@ -78,6 +79,7 @@ void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 	m_bSearch = COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 100, tempP);
 	if (m_bSearch && m_health > 10)
 	{
+		
 		if (m_dst.x > player->GetDstP()->x && m_dst.x < player->GetDstP()->w + player->GetDstP()->x)
 			x = player->GetDstP()->w;
 		else
@@ -90,9 +92,6 @@ void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 
 		SDL_Rect temp2 = { player->GetDstP()->x + x, player->GetDstP()->y + y, player->GetDstP()->w / 2.0f, player->GetDstP()->h / 2.0f };
 		SDL_Rect temp3 = { player->GetDstP()->x, player->GetDstP()->y, player->GetDstP()->w, player->GetDstP()->h };
-		
-
-		
 		double a = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2 + y) - (GetDstP()->y + GetDstP()->h / 2),
 			(player->GetDstP()->x + player->GetDstP()->w / 2) - (GetDstP()->x + GetDstP()->w / 2) + x);
 		MAMA::SetDeltas(a, dx, dy, 2.0, 2.0);
@@ -101,8 +100,14 @@ void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 		}
 		GetDstP()->x += (int)round(dx);
 		GetDstP()->y += (int)round(dy);
-			
+		++alarm;
 	}
+	if (alarm == 100)
+	{
+		SOMA::PlaySound("alarm");
+		alarm = 0;
+	}
+
 	m_healthBarGreen->SetDstWH(getHealth(), 4);
 }
 

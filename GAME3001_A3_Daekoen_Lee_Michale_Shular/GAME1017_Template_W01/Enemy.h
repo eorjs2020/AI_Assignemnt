@@ -48,7 +48,7 @@ private:
 		m_maxVelY;
 	glm::vec2 m_ePos;
 	glm::vec2 m_Vel;
-	int m_iLOS;
+	int m_iLOS, alarm;
 	bool m_bLOS;
 	bool m_bSearch;
 	SDL_FRect m_rSearch;

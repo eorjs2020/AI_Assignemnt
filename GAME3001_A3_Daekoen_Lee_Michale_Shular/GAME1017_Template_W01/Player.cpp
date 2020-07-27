@@ -3,7 +3,7 @@
 #include "EventManager.h"
 #include "Engine.h"
 #include "TextureManager.h"
-
+#include "SoundManager.h"
 #define SPEED 2
 
 Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf)
@@ -46,6 +46,7 @@ void Player::Update()
 			{
 				m_dst.y += -SPEED;
 				m_pBulletDir = UP;
+				
 			}
 		
 		}
