@@ -178,8 +178,10 @@ void PlayState::Update()
 	if (m_Debugmode) {
 		if (EVMA::KeyPressed(SDL_SCANCODE_K)) {
 			std::cout << "Damage to Enemy\n";
-			for (auto i = 0; i < m_Enemy.size(); ++i)
-				m_Enemy[i]->setHealth(-4);
+			for (auto i = 0; i < m_Enemy.size(); ++i) {
+				if(m_Enemy[i] != nullptr)
+					m_Enemy[i]->setHealth(-4);
+			}
 		}
 		if (EVMA::KeyPressed(SDL_SCANCODE_P)) {
 			std::cout << "Patrol mode\n";
@@ -216,7 +218,7 @@ void PlayState::Update()
 
 	for (auto i = 0; i < m_Enemy.size(); ++i)
 	{
-		if (m_pPlayer->getAttack() == true && m_pPlayer->getOneAttack() == false) {
+		if (m_Enemy[i] != nullptr && m_pPlayer->getAttack() == true && m_pPlayer->getOneAttack() == false) {
 			AnimatedSprite* tempW = &m_pPlayer->getSword();
 			SDL_FRect tempS = { tempW->GetDstP()->x, tempW->GetDstP()->y, tempW->GetDstP()->w, tempW->GetDstP()->h };
 			SDL_FRect tempE = { m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y, m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h };
