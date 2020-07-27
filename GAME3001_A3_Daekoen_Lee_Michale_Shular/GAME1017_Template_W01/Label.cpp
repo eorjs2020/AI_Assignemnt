@@ -3,7 +3,7 @@
 #include "FontManager.h"
 #include <cstring>
 
-Label::Label(std::string key, const float x, const float y, const char* str,
+Label::Label(std::string key, const float x, const float y, std::string str,
 	const SDL_Color col) :m_TextColor(col)
 {
 	m_Font = FontManager::GetFont(key);
@@ -21,10 +21,10 @@ void Label::Render()
 	SDL_RenderCopyF(Engine::Instance().GetRenderer(), m_pTexture, 0, &m_rTextRect);
 }
 
-void Label::SetText(const char* str)
+void Label::SetText(std::string str)
 {
-	strcpy_s(m_String, 256, str);
-	SDL_Surface* fontSurf = TTF_RenderText_Solid(m_Font, m_String, m_TextColor);
+	//strcpy_s(m_String, 256, str);
+	SDL_Surface* fontSurf = TTF_RenderText_Solid(m_Font, str.c_str(), m_TextColor);
 	SDL_DestroyTexture(m_pTexture);
 	m_pTexture = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), fontSurf);
 	m_rTextRect = { m_rTextRect.x, m_rTextRect.y, (float)fontSurf->w, (float)fontSurf->h };

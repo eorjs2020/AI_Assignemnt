@@ -37,15 +37,20 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 	else return false; // SDL init fail.
 	// Example specific initialization.
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2"); // Call this before any textures are created.
-
+	SOMA::Load("Aud/fire.wav", "fire", SOUND_SFX);
+	SOMA::Load("Aud/laser.wav", "laser", SOUND_SFX);
+	SOMA::Load("Aud/Industrial Alarm.wav", "alarm", SOUND_SFX);
+	
+	FOMA::RegisterFont("Img/ltype.ttf", "tile", 20);
 	TextureManager::RegisterTexture("img/0x72.png", "Tile");
 	TEMA::RegisterTexture("Img/Kit.png", "Button");
 	// Final engine initialization calls.
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_running = true; // Everything is okay, start the engine.
 	cout << "Engine Init success!" << endl;
+	SOMA::AllocateChannels(16);
 	STMA::ChangeState(new StartState);
-
+	
 	return true;
 }
 
