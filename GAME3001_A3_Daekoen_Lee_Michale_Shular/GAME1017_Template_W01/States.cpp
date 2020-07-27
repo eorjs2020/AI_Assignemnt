@@ -176,11 +176,16 @@ void PlayState::Update()
 		PlayerHasLinofSight = false;
 	/*for (auto i = 0; i < m_pObstacle.size(); ++i)
 	{
-		for (auto j = 0; j < m_Enemy.size(); ++j)
-			if(COMA::LOSCheck(m_pPlayer, m_Enemy[j], m_pObstacle[i]));
-				++LOS;
-	}*/
-	
+	if (m_pPlayer->getAttack() == true && m_pPlayer->getOneAttack() == false){
+		m_pPlayer->setOneAttack(true);
+		AnimatedSprite* tempW = &m_pPlayer->getSword();
+		SDL_FRect tempS = { tempW->GetDstP()->x, tempW->GetDstP()->y, tempW->GetDstP()->w, tempW->GetDstP()->h };
+		SDL_FRect tempE = { m_Enemy->GetDstP()->x, m_Enemy->GetDstP()->y, m_Enemy->GetDstP()->w, m_Enemy->GetDstP()->h };
+			m_Enemy->setHealth(-4);
+		if (COMA::AABBCheck(tempS, tempE)) {
+			std::cout << "attack\n";
+		}
+	}
 	m_pPlayer->Update();
 	for (auto i = 0; i < m_Enemy.size(); ++i)
 		m_Enemy[i]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPath);
@@ -194,6 +199,17 @@ void PlayState::Update()
 	}
 
 	CheckCollision();
+	if (COMA::AABBCheck({ m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h }, 
+			{ m_Enemy->GetDstP()->x, m_Enemy->GetDstP()->y, m_Enemy->GetDstP()->w, m_Enemy->GetDstP()->h } ) && m_canHit == true) {
+		m_pPlayer->setHealth(-4);
+		m_canHit = false;
+		std::cout << "hit\n";
+	}
+	++m_hitCoolDown;
+	if (m_hitCoolDown >= 60){
+		m_hitCoolDown = 0;
+	}
+		m_canHit = true;
 }
 
 void PlayState::Render()

@@ -48,6 +48,9 @@ private:
 	bool PlayerHasLinofSight5;
 	bool m_Debugmode = false, m_PatrolMode = false;
 	int targetNode = 1;
+	bool PlayerHasLinofSight = true;
+	bool m_Debugmode = false, m_PatrolMode = false, m_canHit = true;
+	int targetNode = 1, m_hitCoolDown = 0;
 	std::vector<PathNode*> * a;
 	int LOS;
 public:

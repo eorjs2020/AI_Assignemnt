@@ -3,6 +3,7 @@
 #include "EventManager.h"
 #include "Engine.h"
 #include "TextureManager.h"
+
 #define SPEED 2
 
 Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf)
@@ -17,6 +18,7 @@ Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sst
 
 void Player::Update()
 {
+	
 	switch (m_state)
 	{
 	case idle:
@@ -76,20 +78,35 @@ void Player::Update()
 		break;
 	}
 	Animate();
-	if (EVMA::KeyPressed(SDL_SCANCODE_SPACE))
+	if (EVMA::MousePressed(SDL_BUTTON_LEFT) && !m_attack)
 	{
-		m_attack = !m_attack;
-		if (m_dir == 0) {
-			m_sword = new AnimatedSprite({ 0, 109, 30, 12 }, { m_dst.x - 12, m_dst.y - 16, 30.0f, 12.0f },
-				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 0, 10);
+		m_attack = !m_attack;	
+		m_Oneattack = false;
+		m_sword = new AnimatedSprite({ 0, 109, 30, 12 }, { m_dst.x + 16, m_dst.y + 16, 30.0f, 12.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 0, 10);		
+	}
+	if (m_attack) {
+		if (m_dir == 1) {
+			m_sword->SetDstXY(this->GetDstP()->x - 16, this->GetDstP()->y+ 16);
+			m_sword->SetFilp(SDL_FLIP_HORIZONTAL);
+		}
+		else{
+			m_sword->SetDstXY(this->GetDstP()->x + 16, this->GetDstP()->y + 16);
+		}
+		++m_attackTimer;
+		if (m_attackTimer >= 10) {
+			m_attack = !m_attack;
+			m_attackTimer = 0;
+			m_Oneattack = true;
+			m_sword = nullptr;
 		}
 	}
 
 	if (EVMA::KeyPressed(SDL_SCANCODE_1))
 	{
 		setHealth(-4);
-		m_healthBarGreen->SetDstWH(getHealth(), 4);
 	}
+	m_healthBarGreen->SetDstWH(getHealth(), 4);
 	m_healthBarRed->SetDstXY(this->GetDstP()->x, this->GetDstP()->y);
 	m_healthBarGreen->SetDstXY(this->GetDstP()->x, this->GetDstP()->y);
 	
@@ -100,7 +117,7 @@ void Player::Render()
 	SDL_RenderCopyExF(m_pRend, m_pText, GetSrcP(), GetDstP(), m_angle, 0, static_cast<SDL_RendererFlip>(m_dir));
 	m_healthBarRed->Render();
 	m_healthBarGreen->Render();
-	if (m_attack)
+	if (m_sword != nullptr)
 	{
 		m_sword->Render();
 	}
