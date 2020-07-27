@@ -152,6 +152,17 @@ void PlayState::Update()
 		PlayerHasLinofSight = false;
 	
 	
+	if (COMA::AABBCheck({ m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h }, 
+			{ m_Enemy->GetDstP()->x, m_Enemy->GetDstP()->y, m_Enemy->GetDstP()->w, m_Enemy->GetDstP()->h } ) && m_canHit == true) {
+		m_canHit = false;
+		m_pPlayer->setHealth(-4);
+		std::cout << "hit\n";
+	}
+	++m_hitCoolDown;
+	if (m_hitCoolDown >= 60){
+		m_canHit = true;
+		m_hitCoolDown = 0;
+	}
 	
 	
 

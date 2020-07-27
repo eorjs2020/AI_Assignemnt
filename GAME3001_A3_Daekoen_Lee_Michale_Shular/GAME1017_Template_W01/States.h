@@ -35,8 +35,8 @@ private:
 	std::vector<PathNode*> m_pPatrolPath;
 	Enemy* m_Enemy;
 	bool PlayerHasLinofSight = true;
-	bool m_Debugmode = false, m_PatrolMode = false;
-	int targetNode = 1;
+	bool m_Debugmode = false, m_PatrolMode = false, m_canHit = true;
+	int targetNode = 1, m_hitCoolDown = 0;
 	std::vector<PathNode*> * a;
 	int LOS;
 public:

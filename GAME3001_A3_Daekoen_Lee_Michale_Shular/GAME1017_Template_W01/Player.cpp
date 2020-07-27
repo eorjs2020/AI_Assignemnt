@@ -74,7 +74,7 @@ void Player::Update()
 		break;
 	}
 	Animate();
-	if (EVMA::KeyPressed(SDL_SCANCODE_SPACE) && !m_attack)
+	if (EVMA::MousePressed(SDL_BUTTON_LEFT) && !m_attack)
 	{
 		m_attack = !m_attack;	
 		m_Oneattack = false;
@@ -101,8 +101,8 @@ void Player::Update()
 	if (EVMA::KeyPressed(SDL_SCANCODE_1))
 	{
 		setHealth(-4);
-		m_healthBarGreen->SetDstWH(getHealth(), 4);
 	}
+	m_healthBarGreen->SetDstWH(getHealth(), 4);
 	m_healthBarRed->SetDstXY(this->GetDstP()->x, this->GetDstP()->y);
 	m_healthBarGreen->SetDstXY(this->GetDstP()->x, this->GetDstP()->y);
 	
