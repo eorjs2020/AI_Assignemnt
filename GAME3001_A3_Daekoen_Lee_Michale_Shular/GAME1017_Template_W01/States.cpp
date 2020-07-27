@@ -97,8 +97,8 @@ void PlayState::Enter()
 
 	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
 
-	SOMA::SetSoundVolume(30);
-	SOMA::SetMusicVolume(15);
+	SOMA::SetSoundVolume(10);
+	SOMA::SetMusicVolume(7);
 	SOMA::Load("Aud/Turtles.mp3", "BGM", SOUND_MUSIC);
 	SOMA::PlayMusic("BGM");
 }
@@ -122,6 +122,14 @@ void PlayState::RenderGrid()
 		}
 		DEMA::DrawRect(glm::vec2(m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y),
 			m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h);
+		for (unsigned i = 0; i < m_Enemy.size(); ++i)
+		{
+			if (m_Enemy[i]->getAlive() == true)
+			{
+				DEMA::DrawRect(glm::vec2(m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y),
+					m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h);
+			}
+		}
 	}
 }
 void PlayState::RenderLOS()
@@ -243,10 +251,12 @@ void PlayState::Update()
 		m_hitCoolDown = 0;
 		m_canHit = true;
 	}
-	for (auto i = 0; i < m_Enemy.size(); ++i) {
+	/*for (auto i = 0; i < m_Enemy.size(); ++i) {
 		if (m_Enemy[i]->getAlive() == false)
 			delete m_Enemy[i];
-	}
+		
+		
+	}*/
 }
 
 void PlayState::Render()
