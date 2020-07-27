@@ -8,9 +8,7 @@
 #include "TextureManager.h"
 #include <iostream>
 #include <fstream>
-#define WIDTH 1024
-#define HEIGHT 768
-#define FPS 60
+
 using namespace std;
 
 Engine::Engine():m_running(false){ cout << "Engine class constructed!" << endl; }

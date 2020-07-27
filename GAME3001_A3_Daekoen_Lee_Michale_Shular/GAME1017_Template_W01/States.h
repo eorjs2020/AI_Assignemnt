@@ -10,7 +10,8 @@
 #include "Button.h"
 #include "Label.h"
 #include "Enemy.h"
-
+#include "Bullet.h"
+#include "glm.hpp"
 class State // This is the abstract base class for all specific states.
 {
 public: // Public methods.
@@ -33,7 +34,11 @@ private:
 	std::vector<Tile*> m_pObstacle;
 	std::vector<Tile*> m_pHazrad;
 	std::vector<PathNode*> m_pPatrolPath;
-	Enemy* m_Enemy;
+	std::vector<Bullet*> m_pPlayerBullet;
+	std::vector<Enemy*> m_Enemy;
+	glm::vec2 m_pMousePos;
+	bool m_bPBNull;
+	bool m_bCanShoot = true;
 	bool PlayerHasLinofSight = true;
 	bool m_Debugmode = false, m_PatrolMode = false;
 	int targetNode = 1;
@@ -49,6 +54,7 @@ public:
 	void SetLOS();
 	void Exit();
 	void Resume();
+	void CheckCollision();
 	void m_buildPatrolPath();
 	void m_displayPatrolPath();
 };

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include "SDL.h"
+#include "glm.hpp"
 
 class MathManager
 {
@@ -21,7 +22,7 @@ public: // Public methods.
 	static double Angle360(double a);
 	static double LerpD(double first, double second, double perc);
 	static double LerpRad(double a, double b, double factor);
-
+	static glm::vec2 normalize(glm::vec2 vec);
 private: // Private properties.
 	MathManager() {}
 };

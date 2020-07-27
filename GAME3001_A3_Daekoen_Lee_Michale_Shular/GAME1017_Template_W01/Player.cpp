@@ -43,6 +43,7 @@ void Player::Update()
 			if (m_dst.y > 0 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, -SPEED))
 			{
 				m_dst.y += -SPEED;
+				m_pBulletDir = UP;
 			}
 		
 		}
@@ -51,6 +52,7 @@ void Player::Update()
 			if (m_dst.y < 768 - 32 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, SPEED))
 			{
 				m_dst.y += SPEED;
+				m_pBulletDir = DOWN;
 			}
 		}
 		if (EVMA::KeyHeld(SDL_SCANCODE_A))
@@ -59,6 +61,7 @@ void Player::Update()
 			{
 				m_dst.x += -SPEED;
 				m_dir = 1;
+				m_pBulletDir = LEFT;
 			}
 		}
 		else if (EVMA::KeyHeld(SDL_SCANCODE_D))
@@ -67,6 +70,7 @@ void Player::Update()
 			{
 				m_dst.x += SPEED;
 				m_dir = 0;
+				m_pBulletDir = RIGHT;
 			}
 		}
 		break;
@@ -100,6 +104,11 @@ void Player::Render()
 	{
 		m_sword->Render();
 	}
+}
+
+int Player::GetDir()
+{
+	return m_pBulletDir;
 }
 
 void Player::SetState(int s)
