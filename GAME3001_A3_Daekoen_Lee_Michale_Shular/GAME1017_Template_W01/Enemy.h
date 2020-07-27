@@ -13,6 +13,7 @@ class Enemy : public AnimatedSprite
 {
 public:
 	Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
+	~Enemy();
 	void Update(Player* player, bool a, std::vector<PathNode*> b);
 	void Render();
 	int getHealth() { return m_health; }
@@ -30,13 +31,13 @@ public:
 	void setPosX(double x) { m_dst.x += x; }
 	void setPosY(double y) { m_dst.y += y; }
 	void RenderRadius(int rad, int x, int y);
-	
+	bool getAlive() { return m_alive; }
 	
 private:
-	enum state { idle, running } m_state;
-	bool m_dir;
+	enum state { idle, running, death } m_state;
+	bool m_dir, m_alive = true;
 	void SetState(int s);
-	int m_health, m_targetnode = 1;
+	int m_health, m_targetnode = 1, m_alivetimer = 0;
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
 	double m_accelX,

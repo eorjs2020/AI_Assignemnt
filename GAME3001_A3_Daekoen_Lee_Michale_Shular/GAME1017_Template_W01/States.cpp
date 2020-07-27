@@ -66,10 +66,20 @@ void PlayState::Enter()
 	// Final engine initialization calls.
 	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
-	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPath[targetNode + 1]->GetPos().x, m_pPatrolPath[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
-	m_Enemy[0]->SetDstXY(m_pPatrolPath[0]->GetPos().x - 15, m_pPatrolPath[0]->GetPos().y - 16);
-	a = &m_pPatrolPath;
+	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathTwo[0]->GetPos().x, m_pPatrolPathTwo[0]->GetPos().y ,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
+	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
+	
+	
+	m_Enemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
+	m_Enemy[1]->SetDstXY(m_pPatrolPathTwo[0]->GetPos().x - 15, m_pPatrolPathTwo[0]->GetPos().y - 16);
+	m_Enemy[2]->SetDstXY(m_pPatrolPathThree[0]->GetPos().x - 15, m_pPatrolPathThree[0]->GetPos().y - 16);
+	
+	
+	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 	
 	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[9][5]->GetDstP()->x , Engine::Instance().GetLevel()[9][5]->GetDstP()->y ,
@@ -186,31 +196,49 @@ void PlayState::Update()
 	{
 		m_pPlayerBullet[i]->Update();
 	}
-	if (m_pPlayer->getAttack() == true && m_pPlayer->getOneAttack() == false) {
-		m_pPlayer->setOneAttack(true);
-		AnimatedSprite* tempW = &m_pPlayer->getSword();
-		SDL_FRect tempS = { tempW->GetDstP()->x, tempW->GetDstP()->y, tempW->GetDstP()->w, tempW->GetDstP()->h };
-		SDL_FRect tempE = { m_Enemy[0]->GetDstP()->x, m_Enemy[0]->GetDstP()->y, m_Enemy[0]->GetDstP()->w, m_Enemy[0]->GetDstP()->h };
-		m_Enemy[0]->setHealth(-4);
-		if (COMA::AABBCheck(tempS, tempE)) {
-			std::cout << "attack\n";
+
+	for (auto i = 0; i < m_Enemy.size(); ++i)
+	{
+		if (m_pPlayer->getAttack() == true && m_pPlayer->getOneAttack() == false) {
+			AnimatedSprite* tempW = &m_pPlayer->getSword();
+			SDL_FRect tempS = { tempW->GetDstP()->x, tempW->GetDstP()->y, tempW->GetDstP()->w, tempW->GetDstP()->h };
+			SDL_FRect tempE = { m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y, m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h };
+			if (COMA::AABBCheck(tempS, tempE)) {
+				std::cout << "attack\n";
+				m_pPlayer->setOneAttack(true);
+				m_Enemy[i]->setHealth(-4);
+			}
 		}
 	}
-	for (auto i = 0; i < m_Enemy.size(); ++i)
-		m_Enemy[i]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPath);
+	
+	if(m_Enemy[0]->getAlive() == true)
+		m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
+	if (m_Enemy[1]->getAlive() == true)
+		m_Enemy[1]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathTwo);
+	if (m_Enemy[2]->getAlive() == true)
+		m_Enemy[2]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathThree);
+
+
 	m_pPlayer->Update();
 	CheckCollision();
-	if (COMA::AABBCheck({ m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h }, 
-			{ m_Enemy[0]->GetDstP()->x, m_Enemy[0]->GetDstP()->y, m_Enemy[0]->GetDstP()->w, m_Enemy[0]->GetDstP()->h } ) && m_canHit == true) {
-		m_pPlayer->setHealth(-4);
-		m_canHit = false;
-		std::cout << "hit\n";
+	for (auto i = 0; i < m_Enemy.size(); ++i)
+	{
+		if (COMA::AABBCheck({ m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h },
+			{ m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y, m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h }) && m_canHit == true) {
+			m_pPlayer->setHealth(-4);
+			m_canHit = false;
+			std::cout << "hit\n";
+		}
 	}
 	++m_hitCoolDown;
 	if (m_hitCoolDown >= 60){
 		m_hitCoolDown = 0;
-	}
 		m_canHit = true;
+	}
+	for (auto i = 0; i < m_Enemy.size(); ++i) {
+		if (m_Enemy[i]->getAlive() == false)
+			delete m_Enemy[i];
+	}
 }
 
 void PlayState::Render()
@@ -226,8 +254,10 @@ void PlayState::Render()
 		}
 	}
 	m_pPlayer->Render();
-	for (auto i = 0; i < m_Enemy.size(); ++i)
-		m_Enemy[i]->Render();
+	for (auto i = 0; i < m_Enemy.size(); ++i){
+		if (m_Enemy[i]->getAlive() == true)
+			m_Enemy[i]->Render();
+	}
 	for (auto i = 0; i < (int)m_pPlayerBullet.size(); i++)
 	{
 		m_pPlayerBullet[i]->Render();
@@ -239,7 +269,7 @@ void PlayState::Render()
 		for (auto i = 0; i < m_Enemy.size(); ++i)
 		{
 			DEMA::DrawLine({ int(m_pPlayer->GetDstP()->x + m_pPlayer->GetDstP()->w / 2), int(m_pPlayer->GetDstP()->y + m_pPlayer->GetDstP()->h / 2) },
-				{ int(m_Enemy[i]->GetDstP()->x + m_Enemy[0]->GetDstP()->w / 2), int(m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2) },
+				{ int(m_Enemy[i]->GetDstP()->x + m_Enemy[i]->GetDstP()->w / 2), int(m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2) },
 				{ Uint8(LOSColour.r), Uint8(LOSColour.g), Uint8(LOSColour.b), Uint8(LOSColour.a) });
 			m_Enemy[i]->RenderRadius(100, m_Enemy[i]->GetDstP()->x + m_Enemy[i]->GetDstP()->w / 2, m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2);
 		}
@@ -303,32 +333,45 @@ void PlayState::CheckCollision()
 
 void PlayState::m_buildPatrolPath()
 {
+	//PathOne
 	//right
 	for (auto i = 33; i < 63; i++)
 	{
-		m_pPatrolPath.push_back(m_pGrid[i]);
+		m_pPatrolPathOne.push_back(m_pGrid[i]);
 	}
 	//down
 	for (auto i = 3; i < 4; i++)
 	{
-		m_pPatrolPath.push_back(m_pGrid[(i * 32 - 2)]);
+		m_pPatrolPathOne.push_back(m_pGrid[(i * 32 - 2)]);
 	}
 	//left
 	for (auto i = 126; i > 97; i--)
 	{
-		m_pPatrolPath.push_back(m_pGrid[i]);
+		m_pPatrolPathOne.push_back(m_pGrid[i]);
 	}
 	//up
 	for (auto i = 3 ; i > 0; i--)
 	{
-		m_pPatrolPath.push_back(m_pGrid[(32 * i +1)]);
+		m_pPatrolPathOne.push_back(m_pGrid[(32 * i +1)]);
 	}
-	std::cout << "Number of Nodes: " << m_pPatrolPath.size() << std::endl;
+	std::cout << "Number of Nodes for path One: " << m_pPatrolPathOne.size() << std::endl;
+	//Path two
+	for (auto i = 23; i > 20; i--)
+	{
+		m_pPatrolPathTwo.push_back(m_pGrid[(32 * i - 2)]);
+	}
+	std::cout << "Number of Nodes for path two: " << m_pPatrolPathTwo.size() << std::endl;
+	//Paht three
+		m_pPatrolPathThree.push_back(m_pGrid[240]);
+		m_pPatrolPathThree.push_back(m_pGrid[230]);
+		m_pPatrolPathThree.push_back(m_pGrid[253]);
+		m_pPatrolPathThree.push_back(m_pGrid[320]);
+	std::cout << "Number of Nodes for path three: " << m_pPatrolPathThree.size() << std::endl;
 }
 
 void PlayState::m_displayPatrolPath()
 {
-	for (auto node : m_pPatrolPath)
+	for (auto node : m_pPatrolPathOne)
 	{
 		std::cout << "(" << node->GetPos().x << ", " << node->GetPos().y << ")" << std::endl;
 	}

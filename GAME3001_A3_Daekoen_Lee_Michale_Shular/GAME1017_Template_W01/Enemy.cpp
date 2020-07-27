@@ -19,6 +19,10 @@ Enemy::Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstar
 
 }
 
+Enemy::~Enemy()
+{
+}
+
 
 
 void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
@@ -44,16 +48,25 @@ void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			--m_dst.y;
 		}
 		if (this->m_dst.x == (b[m_targetnode]->GetPos().x - 16) && this->m_dst.y == (b[m_targetnode]->GetPos().y - 16)){
-			if (m_targetnode == 62)
+			if (m_targetnode == b.size() - 1)
 				m_targetnode = 0;
 			++m_targetnode;
-			
 		}
 
 	}
 	switch (m_state)
 	{
 	case idle:
+		if (m_health <= 0)
+		{
+			SetState(death);
+		}
+		break;
+	case death:
+		++m_alivetimer;
+			if (m_alivetimer >= 17){ 
+				m_alive = false;
+			}
 		break;
 	case running:
 		break;
@@ -91,7 +104,6 @@ void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			
 	}
 	m_healthBarGreen->SetDstWH(getHealth(), 4);
-	
 }
 
 void Enemy::Render()
@@ -148,6 +160,12 @@ void Enemy::SetState(int s)
 	{
 		m_sprite = m_spriteMin = 0;
 		m_spriteMax = 3;
+	}
+	else if (m_state == death)
+	{
+		m_sprite = m_spriteMin = 4;
+		m_spriteMax = 6;
+		m_frameMax = 6;
 	}
 	else // Only other is running for now...
 	{
