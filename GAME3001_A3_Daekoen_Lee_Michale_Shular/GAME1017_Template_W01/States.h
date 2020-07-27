@@ -10,7 +10,8 @@
 #include "Button.h"
 #include "Label.h"
 #include "Enemy.h"
-
+#include "Bullet.h"
+#include "glm.hpp"
 class State // This is the abstract base class for all specific states.
 {
 public: // Public methods.
@@ -27,14 +28,24 @@ protected: // Private but inherited.
 class PlayState :public State
 {
 private:
+	std::vector<SDL_FRect> m_pLOSobs;
 	std::map<char, Tile*> m_tiles;
 	Player* m_pPlayer;
 	std::vector<PathNode*> m_pGrid;
 	std::vector<Tile*> m_pObstacle;
 	std::vector<Tile*> m_pHazrad;
 	std::vector<PathNode*> m_pPatrolPath;
-	Enemy* m_Enemy;
-	bool PlayerHasLinofSight = true;
+	std::vector<Bullet*> m_pPlayerBullet;
+	std::vector<Enemy*> m_Enemy;
+	glm::vec2 m_pMousePos;
+	bool m_bPBNull;
+	bool m_bCanShoot = true;
+	bool PlayerHasLinofSight;
+	bool PlayerHasLinofSight1;
+	bool PlayerHasLinofSight2;
+	bool PlayerHasLinofSight3;
+	bool PlayerHasLinofSight4;
+	bool PlayerHasLinofSight5;
 	bool m_Debugmode = false, m_PatrolMode = false;
 	int targetNode = 1;
 	std::vector<PathNode*> * a;
@@ -49,6 +60,7 @@ public:
 	void SetLOS();
 	void Exit();
 	void Resume();
+	void CheckCollision();
 	void m_buildPatrolPath();
 	void m_displayPatrolPath();
 };

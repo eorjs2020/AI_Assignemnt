@@ -15,7 +15,9 @@
 
 #define ROWS 24
 #define COLS 32
-
+#define WIDTH 1024
+#define HEIGHT 768
+#define FPS 60
 class Engine
 {
 public: // Public methods.

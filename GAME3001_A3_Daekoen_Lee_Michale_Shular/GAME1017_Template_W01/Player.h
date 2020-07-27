@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
-
+#include "glm.hpp"
 #include "Sprite.h"
 
 class Player : public AnimatedSprite
@@ -12,14 +12,23 @@ public:
 	void Render();
 	int getHealth() { return m_health; }
 	void setHealth(int a) { m_health += a; }
+	int GetDir();
 private:
 	enum state { idle, running } m_state;
 	bool m_dir, m_attack= false;
 	void SetState(int s);
 	int m_health;
+	
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
 	AnimatedSprite* m_sword;
+	enum BullDir
+	{
+		RIGHT,
+		DOWN,
+		LEFT,
+		UP
+	} m_pBulletDir;
 
 };
 
