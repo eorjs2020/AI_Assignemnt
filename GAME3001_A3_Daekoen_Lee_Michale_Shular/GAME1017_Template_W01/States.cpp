@@ -210,10 +210,15 @@ void PlayState::Update()
 			}
 		}
 	}
-	m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
-	m_Enemy[1]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathTwo);
-	m_Enemy[2]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathThree);
 	
+	if(m_Enemy[0]->getAlive() == true)
+		m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
+	if (m_Enemy[1]->getAlive() == true)
+		m_Enemy[1]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathTwo);
+	if (m_Enemy[2]->getAlive() == true)
+		m_Enemy[2]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathThree);
+
+
 	m_pPlayer->Update();
 	CheckCollision();
 	for (auto i = 0; i < m_Enemy.size(); ++i)
@@ -230,7 +235,10 @@ void PlayState::Update()
 		m_hitCoolDown = 0;
 		m_canHit = true;
 	}
-		
+	for (auto i = 0; i < m_Enemy.size(); ++i) {
+		if (m_Enemy[i]->getAlive() == false)
+			delete m_Enemy[i];
+	}
 }
 
 void PlayState::Render()
@@ -246,8 +254,10 @@ void PlayState::Render()
 		}
 	}
 	m_pPlayer->Render();
-	for (auto i = 0; i < m_Enemy.size(); ++i)
-		m_Enemy[i]->Render();
+	for (auto i = 0; i < m_Enemy.size(); ++i){
+		if (m_Enemy[i]->getAlive() == true)
+			m_Enemy[i]->Render();
+	}
 	for (auto i = 0; i < (int)m_pPlayerBullet.size(); i++)
 	{
 		m_pPlayerBullet[i]->Render();
