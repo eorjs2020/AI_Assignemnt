@@ -71,6 +71,19 @@ void PlayState::Enter()
 	m_Enemy[0]->SetDstXY(m_pPatrolPath[0]->GetPos().x - 15, m_pPatrolPath[0]->GetPos().y - 16);
 	a = &m_pPatrolPath;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
+	
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[9][5]->GetDstP()->x , Engine::Instance().GetLevel()[9][5]->GetDstP()->y ,
+		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 2 + 1});
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[6][21]->GetDstP()->x , Engine::Instance().GetLevel()[6][21]->GetDstP()->y ,
+		Engine::Instance().GetLevel()[21][6]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[21][6]->GetDstP()->h * 2 + 1 });
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[14][18]->GetDstP()->x , Engine::Instance().GetLevel()[14][18]->GetDstP()->y ,
+		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 2 + 1 });
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[18][27]->GetDstP()->x , Engine::Instance().GetLevel()[18][27]->GetDstP()->y ,
+		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 2 + 1 });
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[20][9]->GetDstP()->x , Engine::Instance().GetLevel()[20][9]->GetDstP()->y ,
+		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 2 + 1, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 8 + 7 });
+
+	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
 }
 void PlayState::RenderGrid()
 {
@@ -111,20 +124,24 @@ void PlayState::RenderLOS()
 }
 void PlayState::SetLOS()
 {
+	for (auto node : m_pGrid)
+	{
+		node->setLOS(CollisionManager::LOSCheckN(node, m_pPlayer, &m_pLOSobs[0]));
+	}
 }
 void PlayState::Update()
 {
-	if (EVMA::MousePressed(1) && m_bCanShoot)
+	if (EVMA::MousePressed(3) && m_bCanShoot)
 	{
 		m_bCanShoot = false;
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		m_pMousePos.x = x;
 		m_pMousePos.y = y;
-		m_pPlayerBullet.push_back(new Bullet({ 0,126,13,5 }, { m_pPlayer->GetDstP()->x ,m_pPlayer->GetDstP()->y , 14, 6 }, 
+		m_pPlayerBullet.push_back(new Bullet({ 0,126,14,6 }, { m_pPlayer->GetDstP()->x ,m_pPlayer->GetDstP()->y , 14, 6 }, 
 			Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 10, m_pMousePos));
 	}
-	if (EVMA::MouseReleased(1))
+	if (EVMA::MouseReleased(3))
 	{
 		m_bCanShoot = true;
 	}
@@ -143,21 +160,34 @@ void PlayState::Update()
 			m_PatrolMode = !m_PatrolMode;
 		}
 	}
-	LOS = 0;
-	for (auto i = 0; i < m_pObstacle.size(); ++i)
+	//LOS = 0;
+	SetLOS();
+	PlayerHasLinofSight1 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+	PlayerHasLinofSight2 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+	PlayerHasLinofSight3 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+	PlayerHasLinofSight4 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+	PlayerHasLinofSight5 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+	
+
+	if (PlayerHasLinofSight1 && PlayerHasLinofSight2 && PlayerHasLinofSight3 &&
+		PlayerHasLinofSight4 && PlayerHasLinofSight5)
+		PlayerHasLinofSight = true;
+	else
+		PlayerHasLinofSight = false;
+	/*for (auto i = 0; i < m_pObstacle.size(); ++i)
 	{
-		for (auto i = 0; i < m_Enemy.size(); ++i)
-			if(!COMA::LOSCheck(m_pPlayer, m_Enemy[i], m_pObstacle[i]));
+		for (auto j = 0; j < m_Enemy.size(); ++j)
+			if(COMA::LOSCheck(m_pPlayer, m_Enemy[j], m_pObstacle[i]));
 				++LOS;
-	}
+	}*/
 	
 	m_pPlayer->Update();
 	for (auto i = 0; i < m_Enemy.size(); ++i)
 		m_Enemy[i]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPath);
-	if (LOS == 0)
+	/*if (LOS == 0)
 		PlayerHasLinofSight = true;
 	else
-		PlayerHasLinofSight = false;
+		PlayerHasLinofSight = false;*/
 	for (auto i = 0; i < (int)m_pPlayerBullet.size(); i++)
 	{
 		m_pPlayerBullet[i]->Update();
@@ -198,7 +228,7 @@ void PlayState::Render()
 		}
 	}
 	//RenderLOS();
-	
+
 }
 
 void PlayState::Exit()

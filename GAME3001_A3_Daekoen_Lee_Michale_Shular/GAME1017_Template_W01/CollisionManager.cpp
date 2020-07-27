@@ -45,7 +45,7 @@ bool CollisionManager::LinePointCheck(const SDL_FPoint object1_start, const SDL_
 }
 bool CollisionManager::lineLineCheck(const glm::vec2 line1_start, const glm::vec2 line1_end, const glm::vec2 line2_start, const glm::vec2 line2_end)
 {
-	const auto x1 = line1_start.x;
+		const auto x1 = line1_start.x;
 		const auto x2 = line1_end.x;
 		const auto x3 = line2_start.x;
 		const auto x4 = line2_end.x;
@@ -66,7 +66,8 @@ bool CollisionManager::lineLineCheck(const glm::vec2 line1_start, const glm::vec
 	
 		return false;
 }
-bool CollisionManager::lineRectCheck(const glm::vec2 line1_start, const glm::vec2 line1_end, const glm::vec2 rec_start, const float rect_width, const float rect_height)
+bool CollisionManager::lineRectCheck(const glm::vec2 line1_start, const glm::vec2 line1_end, const glm::vec2 rec_start, 
+	const float rect_width, const float rect_height)
 {
 	const auto x1 = line1_start.x;
 		const auto x2 = line1_end.x;
@@ -90,22 +91,41 @@ bool CollisionManager::lineRectCheck(const glm::vec2 line1_start, const glm::vec
 	
 		return false;
 }
-bool CollisionManager::LOSCheck(Sprite* from, Sprite* to, Tile* obstacle)
+bool CollisionManager::LOSCheck(Sprite* from, Sprite* to, SDL_FRect* obstacle)
 {
 	const auto lineStart = glm::vec2(from->GetDstP()->x + from->GetDstP()->w / 2, from->GetDstP()->y + from->GetDstP()->h / 2);
 	const auto lineEnd = glm::vec2(to->GetDstP()->x + to->GetDstP()->w / 2, to->GetDstP()->y + to->GetDstP()->h / 2);
 	// aabb
-	const auto boxWidth = obstacle->GetDstP()->w;
+	const auto boxWidth = obstacle->w;
 	const int halfBoxWidth = boxWidth * 0.5f;
-	const auto boxHeight = obstacle->GetDstP()->h;
+	const auto boxHeight = obstacle->h;
 	const int halfBoxHeight = boxHeight * 0.5f;
-	const auto boxStart = glm::vec2(obstacle->GetDstP()->x, obstacle->GetDstP()->y) - glm::vec2(halfBoxWidth, halfBoxHeight);
+	const auto boxStart = glm::vec2(obstacle->x, obstacle->y) - glm::vec2(halfBoxWidth, halfBoxHeight);
 	if (lineRectCheck(lineStart, lineEnd, boxStart, boxWidth, boxHeight))
 	{
 		//std::cout << "No LOS - Collision with Obstacle!" << std::endl;
 		return false;
 	}
 	
+	return true;
+}
+
+bool CollisionManager::LOSCheckN(PathNode* from, Sprite* to, SDL_FRect* obstacle)
+{
+	const auto lineStart = glm::vec2(from->GetPos().x + from->GetWidth() / 2, from->GetPos().y + from->GetHeight() / 2);
+	const auto lineEnd = glm::vec2(to->GetDstP()->x + to->GetDstP()->w / 2, to->GetDstP()->y + to->GetDstP()->h / 2);
+	// aabb
+	const auto boxWidth = obstacle->w;
+	const int halfBoxWidth = boxWidth * 0.5f;
+	const auto boxHeight = obstacle->h;
+	const int halfBoxHeight = boxHeight * 0.5f;
+	const auto boxStart = glm::vec2(obstacle->x, obstacle->y) - glm::vec2(halfBoxWidth, halfBoxHeight);
+	if (lineRectCheck(lineStart, lineEnd, boxStart, boxWidth, boxHeight))
+	{
+		//std::cout << "No LOS - Collision with Obstacle!" << std::endl;
+		return false;
+	}
+
 	return true;
 }
 
