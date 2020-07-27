@@ -44,10 +44,9 @@ void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			--m_dst.y;
 		}
 		if (this->m_dst.x == (b[m_targetnode]->GetPos().x - 16) && this->m_dst.y == (b[m_targetnode]->GetPos().y - 16)){
-			if (m_targetnode == 62)
+			if (m_targetnode == b.size() - 1)
 				m_targetnode = 0;
 			++m_targetnode;
-			
 		}
 
 	}

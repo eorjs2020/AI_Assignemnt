@@ -34,7 +34,9 @@ private:
 	std::vector<PathNode*> m_pGrid;
 	std::vector<Tile*> m_pObstacle;
 	std::vector<Tile*> m_pHazrad;
-	std::vector<PathNode*> m_pPatrolPath;
+	std::vector<PathNode*> m_pPatrolPathOne;
+	std::vector<PathNode*> m_pPatrolPathTwo;
+	std::vector<PathNode*> m_pPatrolPathThree;
 	std::vector<Bullet*> m_pPlayerBullet;
 	std::vector<Enemy*> m_Enemy;
 	glm::vec2 m_pMousePos;
@@ -48,7 +50,7 @@ private:
 	bool PlayerHasLinofSight5;
 	bool m_Debugmode = false, m_PatrolMode = false, m_canHit = true;
 	int targetNode = 1, m_hitCoolDown = 0;
-	std::vector<PathNode*> * a;
+	std::vector<PathNode*> * TempPForEnemyPath;
 	
 public:
 	PlayState();
