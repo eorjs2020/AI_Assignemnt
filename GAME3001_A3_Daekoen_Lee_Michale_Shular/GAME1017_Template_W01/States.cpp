@@ -96,7 +96,7 @@ void PlayState::Enter()
 		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 2 + 1, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 8 + 7 });
 
 	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
-
+	m_gamestatus = new Label("tile", 420, 700, m_enemiesKilled, { 255, 255, 255, 255 });
 	SOMA::SetSoundVolume(10);
 	SOMA::SetMusicVolume(7);
 	SOMA::Load("Aud/Turtles.mp3", "BGM", SOUND_MUSIC);
@@ -122,9 +122,9 @@ void PlayState::RenderGrid()
 		}
 		DEMA::DrawRect(glm::vec2(m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y),
 			m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h);
-		for (unsigned i = 0; i < m_Enemy.size(); ++i)
+		for (auto i = 0; i < m_Enemy.size(); ++i)
 		{
-			if (m_Enemy[i]->getAlive() == true)
+			if (m_Enemy[i] != nullptr)
 			{
 				DEMA::DrawRect(glm::vec2(m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y),
 					m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h);
@@ -188,12 +188,13 @@ void PlayState::Update()
 	}
 	//LOS = 0;
 	SetLOS();
-	PlayerHasLinofSight1 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-	PlayerHasLinofSight2 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-	PlayerHasLinofSight3 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-	PlayerHasLinofSight4 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-	PlayerHasLinofSight5 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-	
+	if (m_Enemy[0] != nullptr) {
+		PlayerHasLinofSight1 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+		PlayerHasLinofSight2 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+		PlayerHasLinofSight3 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+		PlayerHasLinofSight4 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+		PlayerHasLinofSight5 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
+	}
 
 	if (PlayerHasLinofSight1 && PlayerHasLinofSight2 && PlayerHasLinofSight3 &&
 		PlayerHasLinofSight4 && PlayerHasLinofSight5)
@@ -227,11 +228,11 @@ void PlayState::Update()
 		}
 	}
 	
-	if(m_Enemy[0]->getAlive() == true)
+	if(m_Enemy[0] != nullptr)
 		m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
-	if (m_Enemy[1]->getAlive() == true)
+	if (m_Enemy[1] != nullptr)
 		m_Enemy[1]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathTwo);
-	if (m_Enemy[2]->getAlive() == true)
+	if (m_Enemy[2] != nullptr)
 		m_Enemy[2]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathThree);
 
 
@@ -239,8 +240,8 @@ void PlayState::Update()
 	CheckCollision();
 	for (auto i = 0; i < m_Enemy.size(); ++i)
 	{
-		if (COMA::AABBCheck({ m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h },
-			{ m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y, m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h }) && m_canHit == true) {
+		if (m_Enemy[i] != nullptr && COMA::AABBCheck({ m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h },
+			{ m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y, m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h }) && m_canHit == true ) {
 			m_pPlayer->setHealth(-4);
 			m_canHit = false;
 			std::cout << "hit\n";
@@ -251,12 +252,19 @@ void PlayState::Update()
 		m_hitCoolDown = 0;
 		m_canHit = true;
 	}
-	/*for (auto i = 0; i < m_Enemy.size(); ++i) {
-		if (m_Enemy[i]->getAlive() == false)
+	for (auto i = 0; i < m_Enemy.size(); ++i) {
+		//if (m_Enemy[i]->getAlive() == false)
+		//	++m_score;
+		if (m_Enemy[i] != nullptr && m_Enemy[i]->getAlive() == false)
+		{
+			++m_score;
 			delete m_Enemy[i];
-		
-		
-	}*/
+			m_Enemy[i] = nullptr;
+		}
+	}
+
+	m_enemiesKilled = "Enemies Killed: " + std::to_string(m_score);
+	m_gamestatus->SetText(m_enemiesKilled);
 }
 
 void PlayState::Render()
@@ -273,7 +281,7 @@ void PlayState::Render()
 	}
 	m_pPlayer->Render();
 	for (auto i = 0; i < m_Enemy.size(); ++i){
-		if (m_Enemy[i]->getAlive() == true)
+		if (m_Enemy[i] != nullptr)
 			m_Enemy[i]->Render();
 	}
 	for (auto i = 0; i < (int)m_pPlayerBullet.size(); i++)
@@ -286,13 +294,17 @@ void PlayState::Render()
 		auto LOSColour = (!PlayerHasLinofSight) ? glm::vec4(255.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 255.0f, 0.0f, 1.0f);
 		for (auto i = 0; i < m_Enemy.size(); ++i)
 		{
-			DEMA::DrawLine({ int(m_pPlayer->GetDstP()->x + m_pPlayer->GetDstP()->w / 2), int(m_pPlayer->GetDstP()->y + m_pPlayer->GetDstP()->h / 2) },
-				{ int(m_Enemy[i]->GetDstP()->x + m_Enemy[i]->GetDstP()->w / 2), int(m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2) },
-				{ Uint8(LOSColour.r), Uint8(LOSColour.g), Uint8(LOSColour.b), Uint8(LOSColour.a) });
-			m_Enemy[i]->RenderRadius(100, m_Enemy[i]->GetDstP()->x + m_Enemy[i]->GetDstP()->w / 2, m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2);
+			if (m_Enemy[i] != nullptr)
+			{
+				DEMA::DrawLine({ int(m_pPlayer->GetDstP()->x + m_pPlayer->GetDstP()->w / 2), int(m_pPlayer->GetDstP()->y + m_pPlayer->GetDstP()->h / 2) },
+					{ int(m_Enemy[i]->GetDstP()->x + m_Enemy[i]->GetDstP()->w / 2), int(m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2) },
+					{ Uint8(LOSColour.r), Uint8(LOSColour.g), Uint8(LOSColour.b), Uint8(LOSColour.a) });
+				m_Enemy[i]->RenderRadius(100, m_Enemy[i]->GetDstP()->x + m_Enemy[i]->GetDstP()->w / 2, m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2);
+			}
 		}
 	}
 	//RenderLOS();
+	m_gamestatus->Render();
 
 }
 

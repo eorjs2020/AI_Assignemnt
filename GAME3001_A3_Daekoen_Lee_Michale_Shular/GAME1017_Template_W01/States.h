@@ -49,9 +49,10 @@ private:
 	bool PlayerHasLinofSight4;
 	bool PlayerHasLinofSight5;
 	bool m_Debugmode = false, m_PatrolMode = false, m_canHit = true;
-	int targetNode = 1, m_hitCoolDown = 0;
+	int targetNode = 1, m_hitCoolDown = 0, m_score = 0;
 	std::vector<PathNode*> * TempPForEnemyPath;
-	
+	Label* m_gamestatus; 
+	std::string m_enemiesKilled = "Enemies Killed: 0";
 public:
 	PlayState();
 	void Update();
