@@ -90,7 +90,7 @@ void Enemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 		GetDstP()->y += (int)round(dy);
 			
 	}
-	
+	m_healthBarGreen->SetDstWH(getHealth(), 4);
 	
 }
 

@@ -134,7 +134,16 @@ void PlayState::Update()
 		if(!COMA::LOSCheck(m_pPlayer, m_Enemy, m_pObstacle[i]));
 			++LOS;
 	}
-	
+	if (m_pPlayer->getAttack() == true && m_pPlayer->getOneAttack() == false){
+		m_pPlayer->setOneAttack(true);
+		AnimatedSprite* tempW = &m_pPlayer->getSword();
+		SDL_FRect tempS = { tempW->GetDstP()->x, tempW->GetDstP()->y, tempW->GetDstP()->w, tempW->GetDstP()->h };
+		SDL_FRect tempE = { m_Enemy->GetDstP()->x, m_Enemy->GetDstP()->y, m_Enemy->GetDstP()->w, m_Enemy->GetDstP()->h };
+		if (COMA::AABBCheck(tempS, tempE)) {
+			m_Enemy->setHealth(-4);
+			std::cout << "attack\n";
+		}
+	}
 	m_pPlayer->Update();
 	m_Enemy->Update(m_pPlayer, m_PatrolMode, m_pPatrolPath);
 	if (LOS == 0)
@@ -142,6 +151,10 @@ void PlayState::Update()
 	else
 		PlayerHasLinofSight = false;
 	
+	
+	
+	
+
 	
 }
 

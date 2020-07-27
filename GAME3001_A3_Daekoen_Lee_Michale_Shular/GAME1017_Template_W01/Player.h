@@ -12,9 +12,13 @@ public:
 	void Render();
 	int getHealth() { return m_health; }
 	void setHealth(int a) { m_health += a; }
+	AnimatedSprite getSword() { return *m_sword; }
+	bool getAttack() { return m_attack; }
+	bool getOneAttack() { return m_Oneattack; }
+	void setOneAttack(bool a) { m_Oneattack = a; }
 private:
 	enum state { idle, running } m_state;
-	bool m_dir, m_attack= false;
+	bool m_dir, m_attack= false, m_Oneattack = false;
 	void SetState(int s);
 	int m_health, m_attackTimer;
 	Sprite* m_healthBarGreen;
