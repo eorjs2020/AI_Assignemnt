@@ -66,6 +66,8 @@ public:
 	void CheckCollision();
 	void m_buildPatrolPath();
 	void m_displayPatrolPath();
+	bool LOSNode(int n);
+	bool EnemyHasLOS(int n);
 };
 
 class StartState :public State
