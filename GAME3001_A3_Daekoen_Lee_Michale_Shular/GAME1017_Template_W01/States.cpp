@@ -80,7 +80,11 @@ void PlayState::Enter()
 	m_Enemy[1]->SetDstXY(m_pPatrolPathTwo[0]->GetPos().x - 15, m_pPatrolPathTwo[0]->GetPos().y - 16);
 	m_Enemy[2]->SetDstXY(m_pPatrolPathThree[0]->GetPos().x - 15, m_pPatrolPathThree[0]->GetPos().y - 16);
 	
-	
+	m_box[0] = new Sprite({ 0,133,14,20 }, { Engine::Instance().GetLevel()[4][5]->GetDstP()->x ,Engine::Instance().GetLevel()[4][5]->GetDstP()->y,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"));
+	for (int i = 0; i < 2; i++) {
+		m_boxHP[i] = 5;
+	}
 	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 	
@@ -94,13 +98,17 @@ void PlayState::Enter()
 		Engine::Instance().GetLevel()[9][6]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][6]->GetDstP()->h * 2 + 1 });
 	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[22][9]->GetDstP()->x , Engine::Instance().GetLevel()[22][9]->GetDstP()->y - 16 ,
 		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 2 + 1, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 8  });
-
+	//box LOS
+	m_pLOSobs.push_back({ m_box[0]->GetDstP()->x ,m_box[0]->GetDstP()->y - 16 ,
+		m_box[0]->GetDstP()->w, m_box[0]->GetDstP()->h });
+	////LOS hiding Node 
+	//for (int i = 0; i < m_HidingNode.size(); ++i)
+	//{
+	//	m_pLOSobs.push_back({ m_HidingNode[i]->GetPos().x , m_HidingNode[i]->GetPos().y - 16 ,
+	//		m_HidingNode[i]->GetWidth(),m_HidingNode[i]->GetHeight() });
+	//}
 	//Destructable Objects
-	m_box[0] = new Sprite({ 0,133,14,20 }, { Engine::Instance().GetLevel()[4][5]->GetDstP()->x ,Engine::Instance().GetLevel()[4][5]->GetDstP()->y,32.0f,32.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"));
-	for (int i = 0; i < 2; i++) {
-		m_boxHP[i] = 5;
-	}
+	
 	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
 	m_gamestatus = new Label("tile", 420, 700, m_enemiesKilled, { 255, 255, 255, 255 });
 	m_restart = new RestartButton({ 0, 0, 200, 80 }, { 380.0f, 550, 268, 60 },
@@ -124,13 +132,23 @@ void PlayState::RenderGrid()
 			{
 				auto colour = (!m_pGrid[row * COLS + col]->getLOS()) ? glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
-				DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos() - glm::vec2(m_pGrid[row * COLS + col]->GetWidth() * 0.5f,
+				/*DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos() - glm::vec2(m_pGrid[row * COLS + col]->GetWidth() * 0.5f,
 					m_pGrid[row * COLS + col]->GetHeight() * 0.5f),
-					32, 32);
+					32, 32);*/
 				DEMA::DrawRect(m_pGrid[row * COLS + col]->GetPos(),
 					5, 5, colour);
 
 			}
+		}
+		for (int i = 0; i < m_HidingNode.size(); ++i)
+		{			
+			auto colour = (!m_HidingNode[i]->getLOS()) ? glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+			DEMA::DrawRect(m_HidingNode[i]->GetPos() - glm::vec2(m_HidingNode[i]->GetWidth() * 0.5f,
+				m_HidingNode[i]->GetHeight() * 0.5f),
+					32, 32, colour);
+
+			/*DEMA::DrawRect(m_HidingNode[i]->GetPos(),
+				5, 5, {52,70, 235, 255});*/
 		}
 		DEMA::DrawRect(glm::vec2(m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y),
 			m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h);
@@ -306,7 +324,7 @@ void PlayState::Update()
 		}
 
 
-		m_pPlayer->Update();
+		m_pPlayer->Update(m_box, m_boxHP);
 		CheckCollision();
 		for (auto i = 0; i < m_Enemy.size(); ++i)
 		{
@@ -509,6 +527,16 @@ void PlayState::m_buildPatrolPath()
 		m_pPatrolPathThree.push_back(m_pGrid[253]);
 		m_pPatrolPathThree.push_back(m_pGrid[320]);
 	std::cout << "Number of Nodes for path three: " << m_pPatrolPathThree.size() << std::endl;
+
+	// creation of Hiding Nodes
+	m_HidingNode.push_back(m_pGrid[150]);
+	m_HidingNode.push_back(m_pGrid[217]);
+	m_HidingNode.push_back(m_pGrid[229]);
+	m_HidingNode.push_back(m_pGrid[366]);
+	m_HidingNode.push_back(m_pGrid[501]);
+	m_HidingNode.push_back(m_pGrid[582]);
+	m_HidingNode.push_back(m_pGrid[633]);
+
 }
 
 void PlayState::m_displayPatrolPath()

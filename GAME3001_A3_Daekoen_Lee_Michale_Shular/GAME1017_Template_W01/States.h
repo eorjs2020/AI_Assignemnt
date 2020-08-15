@@ -54,6 +54,7 @@ private:
 	int targetNode = 1, m_hitCoolDown = 0, m_score = 0, m_enemyRespawnTimer[3] = {0, 0, 0 },
 		m_boxHP[2];
 	std::vector<PathNode*> * TempPForEnemyPath;
+	std::vector<PathNode*> m_HidingNode;
 	Label* m_gamestatus; 
 	std::string m_enemiesKilled = "Enemies Killed: 0";
 	Sprite* m_win, * m_lose;

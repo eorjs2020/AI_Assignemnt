@@ -15,11 +15,35 @@ Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sst
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
 	m_alivetimer = 0;
 	m_alive = true;
+	m_boxColl = false;
 }
 
-void Player::Update()
+void Player::Update(Sprite* a[], int b[])
 {
-	
+	if (COMA::AABBCheck(*this->GetDstP(), *a[0]->GetDstP())) {
+		//top of box 
+		if (this->GetDstP()->y + this->GetDstP()->h <= a[0]->GetDstP()->y - a[0]->GetDstP()->h)
+		{
+		this->SetDstXY(this->GetDstP()->x, a[0]->GetDstP()->y - 1);
+		m_boxColl = false;
+		}
+		//bottom of box
+		else if (this->GetDstP()->y >= a[0]->GetDstP()->y - a[0]->GetDstP()->h)
+		{
+		this->SetDstXY(this->GetDstP()->x, a[0]->GetDstP()->y + a[0]->GetDstP()->h + 1);
+		m_boxColl = false;
+		}
+		else if (this->GetDstP()->x + this->GetDstP()->w <= a[0]->GetDstP()->x) {
+		this->SetDstXY(a[0]->GetDstP()->x + this->GetDstP()->w + 1, this->GetDstP()->y);
+		m_boxColl = false;
+		}
+		else if (this->GetDstP()->x >= a[0]->GetDstP()->x + a[0]->GetDstP()->w){
+		this->SetDstXY(a[0]->GetDstP()->x - this->GetDstP()->w - 1, this->GetDstP()->y);
+		m_boxColl = false;
+		}	
+	}
+		
+		
 	switch (m_state)
 	{
 	case idle:
@@ -50,9 +74,8 @@ void Player::Update()
 			{
 				m_dst.y += -SPEED;
 				m_pBulletDir = UP;
-				
 			}
-		
+
 		}
 		else if (EVMA::KeyHeld(SDL_SCANCODE_S))
 		{
@@ -61,10 +84,11 @@ void Player::Update()
 				m_dst.y += SPEED;
 				m_pBulletDir = DOWN;
 			}
+
 		}
 		if (EVMA::KeyHeld(SDL_SCANCODE_A))
 		{
-			if (m_dst.x > 0  && !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, -SPEED, 0))
+			if (m_dst.x > 0 && !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, -SPEED, 0))
 			{
 				m_dst.x += -SPEED;
 				m_dir = 1;
@@ -73,13 +97,16 @@ void Player::Update()
 		}
 		else if (EVMA::KeyHeld(SDL_SCANCODE_D))
 		{
-			if (m_dst.x < 1024 - 32 &&  !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, SPEED, 0))
+			if (m_dst.x < 1024 - 32 && !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, SPEED, 0))
 			{
 				m_dst.x += SPEED;
 				m_dir = 0;
 				m_pBulletDir = RIGHT;
+
 			}
+
 		}
+		
 		break;
 	case dead:
 

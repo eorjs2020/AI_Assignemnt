@@ -8,7 +8,7 @@ class Player : public AnimatedSprite
 {
 public:
 	Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
-	void Update();
+	void Update(Sprite * a[], int b[]);
 	void Render();
 	int getHealth() { return m_health; }
 	void setHealth(int a) { m_health += a; }
@@ -20,7 +20,7 @@ public:
 	bool getAlive() { return m_alive; }
 private:
 	enum state { idle, running, dead } m_state;
-	bool m_dir, m_attack= false, m_Oneattack = false, m_alive;
+	bool m_dir, m_attack= false, m_Oneattack = false, m_alive, m_boxColl;
 	void SetState(int s);
 	int m_health, m_attackTimer, m_alivetimer;
 	Sprite* m_healthBarGreen;
