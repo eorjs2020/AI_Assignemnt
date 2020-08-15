@@ -11,9 +11,14 @@
 
 class Enemy : public AnimatedSprite
 {
+
+};
+
+class MeleeEnemy : public AnimatedSprite
+{
 public:
-	Enemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
-	~Enemy();
+	MeleeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
+	~MeleeEnemy();
 	void Update(Player* player, bool a, std::vector<PathNode*> b);
 	void Render();
 	int getHealth() { return m_health; }
@@ -54,6 +59,53 @@ private:
 	SDL_FRect m_rSearch;
 	double dx, dy, x, y;
 	
+};
+
+class RangeEnemy : public AnimatedSprite
+{
+public:
+	RangeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
+	~RangeEnemy();
+	void Update(Player* player, bool a, std::vector<PathNode*> b);
+	void Render();
+	int getHealth() { return m_health; }
+	void setHealth(int a) { m_health += a; }
+	void StopX();
+	void StopY();
+	void SetAccelX(double a);
+	void SetAccelY(double a);
+	void SetX(float y);
+	void SetY(float y);
+	double GetVelX();
+	double GetVelY();
+	glm::vec2 getVel() { return m_Vel; }
+	glm::vec2 getPos();
+	void setPosX(double x) { m_dst.x += x; }
+	void setPosY(double y) { m_dst.y += y; }
+	void RenderRadius(int rad, int x, int y);
+	bool getAlive() { return m_alive; }
+
+private:
+	enum state { idle, running, death } m_state;
+	bool m_dir, m_alive = true;
+	void SetState(int s);
+	int m_health, m_targetnode = 1, m_alivetimer = 0;
+	Sprite* m_healthBarGreen;
+	Sprite* m_healthBarRed;
+	double m_accelX,
+		m_accelY,
+		m_velX,
+		m_maxVelX,
+		m_velY,
+		m_maxVelY;
+	glm::vec2 m_ePos;
+	glm::vec2 m_Vel;
+	int m_iLOS, alarm;
+	bool m_bLOS;
+	bool m_bSearch;
+	SDL_FRect m_rSearch;
+	double dx, dy, x, y;
+
 };
 
 #endif

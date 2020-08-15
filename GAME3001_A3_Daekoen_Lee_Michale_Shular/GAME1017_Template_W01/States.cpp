@@ -68,11 +68,11 @@ void PlayState::Enter()
 	// Final engine initialization calls.
 	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
-	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+	m_Enemy.push_back(new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
-	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathTwo[0]->GetPos().x, m_pPatrolPathTwo[0]->GetPos().y ,32.0f,32.0f },
+	m_Enemy.push_back(new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathTwo[0]->GetPos().x, m_pPatrolPathTwo[0]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
-	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
+	m_Enemy.push_back(new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
 	
 	
@@ -251,7 +251,7 @@ void PlayState::Update()
 	else {
 		m_enemyRespawnTimer[0]++;
 		if (m_enemyRespawnTimer[0] >= 240) {
-			m_Enemy[0] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+			m_Enemy[0] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 			m_Enemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
 			m_enemyRespawnTimer[0] = 0;
@@ -263,7 +263,7 @@ void PlayState::Update()
 	else {
 		m_enemyRespawnTimer[1]++;
 		if (m_enemyRespawnTimer[1] >= 240) {
-			m_Enemy[1] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+			m_Enemy[1] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 			m_Enemy[1]->SetDstXY(m_pPatrolPathTwo[0]->GetPos().x - 15, m_pPatrolPathTwo[0]->GetPos().y - 16);
 			m_enemyRespawnTimer[1] = 0;
@@ -275,7 +275,7 @@ void PlayState::Update()
 	else {
 		m_enemyRespawnTimer[2]++;
 		if (m_enemyRespawnTimer[2] >= 240) {
-			m_Enemy[2] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+			m_Enemy[2] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 			m_Enemy[2]->SetDstXY(m_pPatrolPathThree[0]->GetPos().x - 15, m_pPatrolPathThree[0]->GetPos().y - 16);
 			m_enemyRespawnTimer[2] = 0;
