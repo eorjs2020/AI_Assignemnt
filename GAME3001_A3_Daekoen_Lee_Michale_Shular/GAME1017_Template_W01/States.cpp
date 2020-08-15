@@ -84,16 +84,16 @@ void PlayState::Enter()
 	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 	
-	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[9][5]->GetDstP()->x , Engine::Instance().GetLevel()[9][5]->GetDstP()->y ,
-		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 2 + 1});
-	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[6][21]->GetDstP()->x , Engine::Instance().GetLevel()[6][21]->GetDstP()->y ,
-		Engine::Instance().GetLevel()[21][6]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[21][6]->GetDstP()->h * 2 + 1 });
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[10][5]->GetDstP()->x , Engine::Instance().GetLevel()[10][5]->GetDstP()->y - 16,
+		Engine::Instance().GetLevel()[10][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[10][5]->GetDstP()->h * 2 });
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[7][21]->GetDstP()->x, Engine::Instance().GetLevel()[7][22]->GetDstP()->y - 16,
+		Engine::Instance().GetLevel()[7][22]->GetDstP()->w * 8 , Engine::Instance().GetLevel()[7][22]->GetDstP()->h * 2 + 1 });
 	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[14][18]->GetDstP()->x , Engine::Instance().GetLevel()[14][18]->GetDstP()->y ,
 		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 2 + 1 });
 	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[18][27]->GetDstP()->x , Engine::Instance().GetLevel()[18][27]->GetDstP()->y ,
-		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 2 + 1 });
-	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[20][9]->GetDstP()->x , Engine::Instance().GetLevel()[20][9]->GetDstP()->y ,
-		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 2 + 1, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 8 + 7 });
+		Engine::Instance().GetLevel()[9][6]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][6]->GetDstP()->h * 2 + 1 });
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[22][9]->GetDstP()->x , Engine::Instance().GetLevel()[22][9]->GetDstP()->y - 16 ,
+		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 2 + 1, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 8  });
 
 	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
 	m_gamestatus = new Label("tile", 420, 700, m_enemiesKilled, { 255, 255, 255, 255 });
@@ -147,11 +147,26 @@ void PlayState::RenderLOS()
 	}
 
 }
+
+bool PlayState::LOSNode(int n)
+{
+	
+	for (auto j = 0; j < m_pLOSobs.size(); ++j)
+	{
+		if (!CollisionManager::LOSCheckN(m_pGrid[n], m_pPlayer, &m_pLOSobs[j]))
+			return false;
+					
+	}
+	return true;
+}
+
 void PlayState::SetLOS()
 {
-	for (auto node : m_pGrid)
+	for (auto node = 0; node < m_pGrid.size(); node++)
 	{
-		node->setLOS(CollisionManager::LOSCheckN(node, m_pPlayer, &m_pLOSobs[0]));
+		
+		m_pGrid[node]->setLOS(LOSNode(node));
+		
 	}
 }
 void PlayState::Update()
@@ -232,10 +247,40 @@ void PlayState::Update()
 	
 	if(m_Enemy[0] != nullptr)
 		m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
+	//Enemy respawn reset timer and position 
+	else {
+		m_enemyRespawnTimer[0]++;
+		if (m_enemyRespawnTimer[0] >= 240) {
+			m_Enemy[0] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+			m_Enemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
+			m_enemyRespawnTimer[0] = 0;
+		}
+	}
 	if (m_Enemy[1] != nullptr)
 		m_Enemy[1]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathTwo);
+	//Enemy respawn reset timer and position 
+	else {
+		m_enemyRespawnTimer[1]++;
+		if (m_enemyRespawnTimer[1] >= 240) {
+			m_Enemy[1] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+			m_Enemy[1]->SetDstXY(m_pPatrolPathTwo[0]->GetPos().x - 15, m_pPatrolPathTwo[0]->GetPos().y - 16);
+			m_enemyRespawnTimer[1] = 0;
+		}
+	}
 	if (m_Enemy[2] != nullptr)
 		m_Enemy[2]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathThree);
+	//Enemy respawn reset timer and position 
+	else {
+		m_enemyRespawnTimer[2]++;
+		if (m_enemyRespawnTimer[2] >= 240) {
+			m_Enemy[2] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+			m_Enemy[2]->SetDstXY(m_pPatrolPathThree[0]->GetPos().x - 15, m_pPatrolPathThree[0]->GetPos().y - 16);
+			m_enemyRespawnTimer[2] = 0;
+		}
+	}
 
 
 	m_pPlayer->Update();
@@ -293,11 +338,13 @@ void PlayState::Render()
 	if (m_Debugmode)
 	{
 		RenderGrid();
-		auto LOSColour = (!PlayerHasLinofSight) ? glm::vec4(255.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 255.0f, 0.0f, 1.0f);
+		
 		for (auto i = 0; i < m_Enemy.size(); ++i)
 		{
+			
 			if (m_Enemy[i] != nullptr)
 			{
+				auto LOSColour = (EnemyHasLOS(i)) ? glm::vec4(255.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 255.0f, 0.0f, 1.0f);
 				DEMA::DrawLine({ int(m_pPlayer->GetDstP()->x + m_pPlayer->GetDstP()->w / 2), int(m_pPlayer->GetDstP()->y + m_pPlayer->GetDstP()->h / 2) },
 					{ int(m_Enemy[i]->GetDstP()->x + m_Enemy[i]->GetDstP()->w / 2), int(m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2) },
 					{ Uint8(LOSColour.r), Uint8(LOSColour.g), Uint8(LOSColour.b), Uint8(LOSColour.a) });
@@ -406,6 +453,17 @@ void PlayState::m_displayPatrolPath()
 	{
 		std::cout << "(" << node->GetPos().x << ", " << node->GetPos().y << ")" << std::endl;
 	}
+}
+
+bool PlayState::EnemyHasLOS(int n)
+{
+	
+	for (auto i = 0; i < m_pLOSobs.size(); ++i)
+	{
+		if (!COMA::LOSCheck(m_pPlayer, m_Enemy[n], &m_pLOSobs[i]))
+			return true;
+	}
+	return false;
 }
 
 StartState::StartState() {}

@@ -53,6 +53,7 @@ private:
 	bool m_bSearch;
 	SDL_FRect m_rSearch;
 	double dx, dy, x, y;
+	
 };
 
 #endif
