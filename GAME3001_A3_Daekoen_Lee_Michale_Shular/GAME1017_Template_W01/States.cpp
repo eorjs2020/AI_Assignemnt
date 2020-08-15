@@ -97,6 +97,8 @@ void PlayState::Enter()
 
 	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
 	m_gamestatus = new Label("tile", 420, 700, m_enemiesKilled, { 255, 255, 255, 255 });
+	
+	m_win = new Sprite({0,0, 450 , 300}, { 200, 200, 450, 300}, Engine::Instance().GetRenderer(), TEMA::GetTexture("win"));
 	SOMA::SetSoundVolume(10);
 	SOMA::SetMusicVolume(7);
 	SOMA::Load("Aud/Turtles.mp3", "BGM", SOUND_MUSIC);
@@ -245,36 +247,45 @@ void PlayState::Update()
 		}
 	}
 	
-	if(m_Enemy[0] != nullptr)
+	if (m_Enemy[0] != nullptr) {
 		m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
+		m_winCondition[0] = false; 
+	}
 	//Enemy respawn reset timer and position 
 	else {
 		m_enemyRespawnTimer[0]++;
-		if (m_enemyRespawnTimer[0] >= 240) {
+		m_winCondition[0] = true;
+		if (m_enemyRespawnTimer[0] >= 600) {
 			m_Enemy[0] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 			m_Enemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
 			m_enemyRespawnTimer[0] = 0;
 		}
 	}
-	if (m_Enemy[1] != nullptr)
+	if (m_Enemy[1] != nullptr) {
 		m_Enemy[1]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathTwo);
+		m_winCondition[1] = false;
+	}
 	//Enemy respawn reset timer and position 
 	else {
 		m_enemyRespawnTimer[1]++;
-		if (m_enemyRespawnTimer[1] >= 240) {
+		m_winCondition[1] = true;
+		if (m_enemyRespawnTimer[1] >= 600) {
 			m_Enemy[1] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 			m_Enemy[1]->SetDstXY(m_pPatrolPathTwo[0]->GetPos().x - 15, m_pPatrolPathTwo[0]->GetPos().y - 16);
-			m_enemyRespawnTimer[1] = 0;
+			m_enemyRespawnTimer[1] = 0;	
 		}
 	}
-	if (m_Enemy[2] != nullptr)
+	if (m_Enemy[2] != nullptr) {
 		m_Enemy[2]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathThree);
+		m_winCondition[2] = false;
+	}
 	//Enemy respawn reset timer and position 
 	else {
 		m_enemyRespawnTimer[2]++;
-		if (m_enemyRespawnTimer[2] >= 240) {
+		m_winCondition[2] = true;
+		if (m_enemyRespawnTimer[2] >= 600) {
 			m_Enemy[2] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 			m_Enemy[2]->SetDstXY(m_pPatrolPathThree[0]->GetPos().x - 15, m_pPatrolPathThree[0]->GetPos().y - 16);
@@ -312,6 +323,7 @@ void PlayState::Update()
 
 	m_enemiesKilled = "Enemies Killed: " + std::to_string(m_score);
 	m_gamestatus->SetText(m_enemiesKilled);
+
 }
 
 void PlayState::Render()
@@ -353,6 +365,9 @@ void PlayState::Render()
 		}
 	}
 	//RenderLOS();
+	if (m_winCondition[0] && m_winCondition[1] && m_winCondition[2]) {
+		m_win->Render();
+	}
 	m_gamestatus->Render();
 
 }

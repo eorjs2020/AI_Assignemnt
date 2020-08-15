@@ -44,6 +44,8 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 	FOMA::RegisterFont("Img/ltype.ttf", "tile", 20);
 	TextureManager::RegisterTexture("img/0x72.png", "Tile");
 	TEMA::RegisterTexture("Img/Kit.png", "Button");
+	TEMA::RegisterTexture("Img/lose.png", "lose");
+	TEMA::RegisterTexture("Img/win.png", "win");
 	// Final engine initialization calls.
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_running = true; // Everything is okay, start the engine.

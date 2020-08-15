@@ -162,9 +162,11 @@
     <Image Include="img\circle.png" />
     <Image Include="Img\Enemies.png" />
     <Image Include="Img\Kit.png" />
+    <Image Include="Img\lose.png" />
     <Image Include="Img\play.png" />
     <Image Include="Img\PlayerShip.png" />
     <Image Include="Img\Tiles.png" />
+    <Image Include="Img\win.png" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dat\Level1.txt" />
