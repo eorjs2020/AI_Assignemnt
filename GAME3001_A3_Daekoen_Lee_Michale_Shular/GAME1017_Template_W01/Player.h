@@ -17,11 +17,12 @@ public:
 	bool getAttack() { return m_attack; }
 	bool getOneAttack() { return m_Oneattack; }
 	void setOneAttack(bool a) { m_Oneattack = a; }
+	bool getAlive() { return m_alive; }
 private:
-	enum state { idle, running } m_state;
-	bool m_dir, m_attack= false, m_Oneattack = false;
+	enum state { idle, running, dead } m_state;
+	bool m_dir, m_attack= false, m_Oneattack = false, m_alive;
 	void SetState(int s);
-	int m_health, m_attackTimer;
+	int m_health, m_attackTimer, m_alivetimer;
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
 	AnimatedSprite* m_sword;

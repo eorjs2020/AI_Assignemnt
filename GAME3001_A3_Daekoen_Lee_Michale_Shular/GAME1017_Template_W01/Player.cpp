@@ -13,7 +13,8 @@ Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sst
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
 	m_healthBarRed = new Sprite({ 0,16,100,9 }, { d.x,d.y - 16, 40.0, 4.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
-
+	m_alivetimer = 0;
+	m_alive = true;
 }
 
 void Player::Update()
@@ -22,6 +23,8 @@ void Player::Update()
 	switch (m_state)
 	{
 	case idle:
+		if (m_health <= 0)
+			SetState(dead);
 		if (EVMA::KeyHeld(SDL_SCANCODE_W) || EVMA::KeyHeld(SDL_SCANCODE_S) ||
 			EVMA::KeyHeld(SDL_SCANCODE_A) || EVMA::KeyHeld(SDL_SCANCODE_D))
 		{
@@ -32,6 +35,7 @@ void Player::Update()
 		if (EVMA::KeyReleased(SDL_SCANCODE_W) || EVMA::KeyReleased(SDL_SCANCODE_S) ||
 			EVMA::KeyReleased(SDL_SCANCODE_A) || EVMA::KeyReleased(SDL_SCANCODE_D))
 		{
+			//?????????
 			SetState(idle);
 			this->setSrcP(0, 47);
 			break; // Skip movement parsing below.
@@ -75,6 +79,14 @@ void Player::Update()
 				m_dir = 0;
 				m_pBulletDir = RIGHT;
 			}
+		}
+		break;
+	case dead:
+
+		this->setSrcP(0, 173);
+		++m_alivetimer;
+		if (m_alivetimer >= 17) {
+			m_alive = false;
 		}
 		break;
 	}
