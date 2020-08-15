@@ -165,6 +165,7 @@
     <Image Include="Img\lose.png" />
     <Image Include="Img\play.png" />
     <Image Include="Img\PlayerShip.png" />
+    <Image Include="Img\restart.png" />
     <Image Include="Img\Tiles.png" />
     <Image Include="Img\win.png" />
   </ItemGroup>

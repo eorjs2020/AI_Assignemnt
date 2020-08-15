@@ -154,6 +154,9 @@
     <Image Include="Img\lose.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Img\restart.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dat\Level1.txt">

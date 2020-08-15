@@ -26,4 +26,12 @@ private:
 public:
 	PlayButton(SDL_Rect src, SDL_FRect dst, SDL_Renderer* r, SDL_Texture* t);
 };
+
+class RestartButton : public Button
+{
+private:
+	void Execute();
+public:
+	RestartButton(SDL_Rect src, SDL_FRect dst, SDL_Renderer* r, SDL_Texture* t);
+};
 #endif

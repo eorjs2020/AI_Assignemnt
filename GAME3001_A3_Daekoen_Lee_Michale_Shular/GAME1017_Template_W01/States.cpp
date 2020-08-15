@@ -97,7 +97,9 @@ void PlayState::Enter()
 
 	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
 	m_gamestatus = new Label("tile", 420, 700, m_enemiesKilled, { 255, 255, 255, 255 });
-	
+	m_restart = new RestartButton({ 0, 0, 200, 80 }, { 380.0f, 350.0f, 268, 60 },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("restart"));
+	m_newGame = false;
 	m_win = new Sprite({0,0, 450 , 300}, { 200, 200, 450, 300}, Engine::Instance().GetRenderer(), TEMA::GetTexture("win"));
 	SOMA::SetSoundVolume(10);
 	SOMA::SetMusicVolume(7);
@@ -321,6 +323,11 @@ void PlayState::Update()
 		}
 	}
 
+	if (m_newGame) {
+		if (m_restart->Update() == 1)
+			return;
+	}
+
 	m_enemiesKilled = "Enemies Killed: " + std::to_string(m_score);
 	m_gamestatus->SetText(m_enemiesKilled);
 
@@ -367,6 +374,10 @@ void PlayState::Render()
 	//RenderLOS();
 	if (m_winCondition[0] && m_winCondition[1] && m_winCondition[2]) {
 		m_win->Render();
+		m_newGame = true;
+	}
+	if (m_newGame) {
+		m_restart->Render();
 	}
 	m_gamestatus->Render();
 
@@ -377,6 +388,7 @@ void PlayState::Exit()
 	for (auto const& i : m_tiles)
 		delete m_tiles[i.first];
 	m_tiles.clear();
+	SOMA::PauseMusic;
 }
 
 void PlayState::Resume()
