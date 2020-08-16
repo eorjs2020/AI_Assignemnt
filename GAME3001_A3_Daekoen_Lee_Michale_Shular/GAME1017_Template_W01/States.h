@@ -37,6 +37,7 @@ private:
 	std::vector<PathNode*> m_pPatrolPathOne;
 	std::vector<PathNode*> m_pPatrolPathTwo;
 	std::vector<PathNode*> m_pPatrolPathThree;
+	std::vector<PathNode*> m_pPatrolPathFour;
 	std::vector<Bullet*> m_pPlayerBullet;
 	std::vector<MeleeEnemy*> m_Enemy;
 	std::vector<RangeEnemy*> m_RangeEnemy;
@@ -50,9 +51,9 @@ private:
 	bool PlayerHasLinofSight4;
 	bool PlayerHasLinofSight5;
 	bool m_Debugmode = false, m_PatrolMode = false,
-		m_winCondition[3] = { false, false, false },
+		m_winCondition[4] = { false, false, false, false },
 		m_newGame, m_loseGame;
-	int targetNode = 1, m_hitCoolDown = 0, m_score = 0, m_enemyRespawnTimer[3] = { 0, 0, 0 };
+	int targetNode = 1, m_hitCoolDown = 0, m_score = 0, m_enemyRespawnTimer[4] = { 0, 0, 0, 0 };
 	std::vector<PathNode*> * TempPForEnemyPath;
 	std::vector<PathNode*> m_HidingNode;
 	Label* m_gamestatus; 
@@ -83,7 +84,7 @@ class StartState :public State
 private:
 	Label* m_nameOne,* m_nameTwo;
 	Button* m_StartBtn;
-
+	Sprite* m_background;
 
 public:
 	StartState();

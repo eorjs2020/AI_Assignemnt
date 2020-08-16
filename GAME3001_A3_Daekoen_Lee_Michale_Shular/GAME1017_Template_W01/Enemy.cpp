@@ -150,7 +150,7 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 					m_canHit = true;
 					attacksate = a_chasing;
 					m_sword = nullptr;
-					m_waitingTimerCheck = rand() % 30;
+					m_waitingTimerCheck = rand() % 120;
 					m_wait = true;
 				}
 				
