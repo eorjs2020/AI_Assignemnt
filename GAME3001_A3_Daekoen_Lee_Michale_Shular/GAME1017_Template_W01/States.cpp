@@ -82,7 +82,14 @@ void PlayState::Enter()
 	Engine::Instance().GetBox().push_back(new DestroyBox({ 0,133,14,20 }, { Engine::Instance().GetLevel()[4][5]->GetDstP()->x ,
 		Engine::Instance().GetLevel()[4][5]->GetDstP()->y,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile")));
-
+	
+	Engine::Instance().GetBox().push_back(new DestroyBox({ 0,133,14,20 }, { Engine::Instance().GetLevel()[14][9]->GetDstP()->x ,
+	Engine::Instance().GetLevel()[14][9]->GetDstP()->y,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile")));
+	
+	Engine::Instance().GetBox().push_back(new DestroyBox({ 0,133,14,20 }, { Engine::Instance().GetLevel()[19][19]->GetDstP()->x ,
+	Engine::Instance().GetLevel()[19][19]->GetDstP()->y,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile")));
 
 	m_RangeEnemy.push_back(new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathFour[0]->GetPos().x, m_pPatrolPathFour[0]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), & m_pEnemyBullet, m_pObstacle, 0, 0, 3, 4));
@@ -528,7 +535,7 @@ void PlayState::CheckCollision()
 			if (SDL_HasIntersection(&b, &e) && !Engine::Instance().GetBox()[j]->IsDestroyed())
 			{
 				delete m_pPlayerBullet[i];
-				Engine::Instance().GetBox()[i]->getDmg();
+				Engine::Instance().GetBox()[j]->getDmg();
 				m_pPlayerBullet[i] = nullptr;
 				m_bPBNull = true;
 				break;
