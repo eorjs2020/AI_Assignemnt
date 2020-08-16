@@ -18,30 +18,9 @@ Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sst
 	m_boxColl = false;
 }
 
-void Player::Update(Sprite* a[], int b[])
+void Player::Update()
 {
-	if (COMA::AABBCheck(*this->GetDstP(), *a[0]->GetDstP())) {
-		//top of box 
-		if (this->GetDstP()->y + this->GetDstP()->h <= a[0]->GetDstP()->y - a[0]->GetDstP()->h)
-		{
-		this->SetDstXY(this->GetDstP()->x, a[0]->GetDstP()->y - 1);
-		m_boxColl = false;
-		}
-		//bottom of box
-		else if (this->GetDstP()->y >= a[0]->GetDstP()->y - a[0]->GetDstP()->h)
-		{
-		this->SetDstXY(this->GetDstP()->x, a[0]->GetDstP()->y + a[0]->GetDstP()->h + 1);
-		m_boxColl = false;
-		}
-		else if (this->GetDstP()->x + this->GetDstP()->w <= a[0]->GetDstP()->x) {
-		this->SetDstXY(a[0]->GetDstP()->x + this->GetDstP()->w + 1, this->GetDstP()->y);
-		m_boxColl = false;
-		}
-		else if (this->GetDstP()->x >= a[0]->GetDstP()->x + a[0]->GetDstP()->w){
-		this->SetDstXY(a[0]->GetDstP()->x - this->GetDstP()->w - 1, this->GetDstP()->y);
-		m_boxColl = false;
-		}	
-	}
+	
 		
 		
 	switch (m_state)
@@ -70,7 +49,7 @@ void Player::Update(Sprite* a[], int b[])
 		}
 		if (EVMA::KeyHeld(SDL_SCANCODE_W))
 		{
-			if (m_dst.y > 0 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, -SPEED))
+			if (m_dst.y > 0 && !COMA::PlayerCollision({(int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, -SPEED))
 			{
 				m_dst.y += -SPEED;
 				m_pBulletDir = UP;
@@ -79,7 +58,7 @@ void Player::Update(Sprite* a[], int b[])
 		}
 		else if (EVMA::KeyHeld(SDL_SCANCODE_S))
 		{
-			if (m_dst.y < 768 - 32 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, SPEED))
+			if (m_dst.y < 768 - 32 && !COMA::PlayerCollision({(int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, SPEED))
 			{
 				m_dst.y += SPEED;
 				m_pBulletDir = DOWN;
@@ -88,7 +67,7 @@ void Player::Update(Sprite* a[], int b[])
 		}
 		if (EVMA::KeyHeld(SDL_SCANCODE_A))
 		{
-			if (m_dst.x > 0 && !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, -SPEED, 0))
+			if (m_dst.x > 0 && !COMA::PlayerCollision({(int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, -SPEED, 0))
 			{
 				m_dst.x += -SPEED;
 				m_dir = 1;

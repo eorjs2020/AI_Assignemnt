@@ -74,6 +74,10 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 	
 	case chasing:
 		
+		if (m_health < 10)
+		{
+			m_state = flee;
+		}
 		switch (attacksate)
 		{
 		case a_chasing:

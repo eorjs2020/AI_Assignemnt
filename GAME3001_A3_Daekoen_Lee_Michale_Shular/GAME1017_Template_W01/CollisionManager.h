@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "Tile.h"
 #include "PathNode.h"
+#include "DestoryBox.h"
 
 class CollisionManager
 {

@@ -141,6 +141,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="DebugManager.h" />
+    <ClInclude Include="DestoryBox.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EventManager.h" />

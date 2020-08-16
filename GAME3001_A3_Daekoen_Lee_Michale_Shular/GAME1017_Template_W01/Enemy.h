@@ -9,10 +9,6 @@
 #include <vector>
 #include "PathNode.h"
 #include  "Tile.h"
-class Enemy : public AnimatedSprite
-{
-	
-};
 
 class MeleeEnemy : public AnimatedSprite
 {

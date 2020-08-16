@@ -79,12 +79,10 @@ void PlayState::Enter()
 	m_Enemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
 	m_Enemy[1]->SetDstXY(m_pPatrolPathTwo[0]->GetPos().x - 15, m_pPatrolPathTwo[0]->GetPos().y - 16);
 	m_Enemy[2]->SetDstXY(m_pPatrolPathThree[0]->GetPos().x - 15, m_pPatrolPathThree[0]->GetPos().y - 16);
-	
-	m_box[0] = new Sprite({ 0,133,14,20 }, { Engine::Instance().GetLevel()[4][5]->GetDstP()->x ,Engine::Instance().GetLevel()[4][5]->GetDstP()->y,32.0f,32.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"));
-	for (int i = 0; i < 2; i++) {
-		m_boxHP[i] = 5;
-	}
+	Engine::Instance().GetBox().push_back(new DestroyBox({ 0,133,14,20 }, { Engine::Instance().GetLevel()[4][5]->GetDstP()->x ,
+		Engine::Instance().GetLevel()[4][5]->GetDstP()->y,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile")));
+
 	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 	
@@ -323,7 +321,7 @@ void PlayState::Update()
 		}
 
 
-		m_pPlayer->Update(m_box, m_boxHP);
+		m_pPlayer->Update();
 		CheckCollision();
 		for (auto i = 0; i < m_Enemy.size(); ++i)
 		{
@@ -374,7 +372,11 @@ void PlayState::Render()
 			Engine::Instance().GetLevel()[row][col]->Render();
 		}
 	}
-	m_box[0]->Render();
+	for (auto i = 0; i < Engine::Instance().GetBox().size(); ++i)
+	{
+		Engine::Instance().GetBox()[i]->Render();
+	}
+	
 	m_pPlayer->Render();
 	for (auto i = 0; i < m_Enemy.size(); ++i){
 		if (m_Enemy[i] != nullptr)
@@ -471,16 +473,14 @@ void PlayState::CheckCollision()
 	{
 		SDL_Rect b = { m_pPlayerBullet[i]->GetDstP()->x, m_pPlayerBullet[i]->GetDstP()->y,
 			m_pPlayerBullet[i]->GetDstP()->w, m_pPlayerBullet[i]->GetDstP()->h };
-		for (int j = 0; j < 2; j++)
+		for (int j = 0; j < Engine::Instance().GetBox().size(); j++)
 		{
-			if (m_box[j] == nullptr || m_boxHP[j] <= 0 ) continue;
-			SDL_Rect e = { m_box[j]->GetDstP()->x, m_box[j]->GetDstP()->y, 32, 32 };
+			if (Engine::Instance().GetBox()[j] == nullptr) continue;
+			SDL_Rect e = { Engine::Instance().GetBox()[j]->GetDstP()->x, Engine::Instance().GetBox()[j]->GetDstP()->y, 32.0f, 32.0f };
 			if (SDL_HasIntersection(&b, &e))
 			{
 				delete m_pPlayerBullet[i];
-				--m_boxHP[j];
-				if(m_boxHP[j] <= 0)
-					m_box[0]->setSrcP(0, 153);
+				Engine::Instance().GetBox()[i]->getDmg();
 				m_pPlayerBullet[i] = nullptr;
 				m_bPBNull = true;
 				break;

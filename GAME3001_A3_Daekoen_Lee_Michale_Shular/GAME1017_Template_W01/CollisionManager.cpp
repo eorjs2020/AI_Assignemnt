@@ -131,7 +131,7 @@ bool CollisionManager::PlayerCollision(const SDL_Rect player, const int dX, cons
 {
 	int playerX = player.x / 32;
 	int playerY = player.y / 32;
-	SDL_Rect p = { player.x + dX + 8 , player.y + dY + 6, player.w - 16, player.h - 10 }; // Adjusted bounding box.
+	SDL_Rect p = { player.x + dX + 8 , player.y + dY + 6, player.w - 16, player.h - 10}; // Adjusted bounding box.
 	Tile* tiles[4] = { Engine::Instance().GetLevel()[playerY][playerX],																				// Player's tile.
 					   Engine::Instance().GetLevel()[playerY][(playerX + 1 == COLS ? COLS-1 : playerX + 1)],										// Right tile.
 					   Engine::Instance().GetLevel()[(playerY + 1 == ROWS ? ROWS-1 : playerY + 1)][(playerX + 1 == COLS ? COLS-1 : playerX + 1)],	// Bottom-Right tile.
@@ -145,7 +145,15 @@ bool CollisionManager::PlayerCollision(const SDL_Rect player, const int dX, cons
 			// Other potential code...
 		}
 	}
+	for (unsigned i = 0; i < Engine::Instance().GetBox().size(); ++i)
+	{
+		SDL_Rect t = MAMA::ConvertFRect2Rect(*(Engine::Instance().GetBox()[i]->GetDstP()));
+		if (SDL_HasIntersection(&p, &t) && !Engine::Instance().GetBox()[i]->IsDestroyed())
+			return true;
+	}
+
 	return false;
 }
+
 
 

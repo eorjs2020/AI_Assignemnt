@@ -8,7 +8,7 @@ class Player : public AnimatedSprite
 {
 public:
 	Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
-	void Update(Sprite * a[], int b[]);
+	void Update();
 	void Render();
 	int getHealth() { return m_health; }
 	void setHealth(int a) { m_health += a; }
