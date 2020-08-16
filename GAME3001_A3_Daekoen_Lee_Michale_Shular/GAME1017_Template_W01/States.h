@@ -38,10 +38,12 @@ private:
 	std::vector<PathNode*> m_pPatrolPathTwo;
 	std::vector<PathNode*> m_pPatrolPathThree;
 	std::vector<Bullet*> m_pPlayerBullet;
+	std::vector<Bullet*> m_pEnemyBullet;
 	std::vector<MeleeEnemy*> m_Enemy;
 	std::vector<RangeEnemy*> m_RangeEnemy;
 	glm::vec2 m_pMousePos;
 	bool m_bPBNull;
+	bool m_bEBNull = false;
 	bool m_bCanShoot = true;
 	bool PlayerHasLinofSight;
 	bool PlayerHasLinofSight1;

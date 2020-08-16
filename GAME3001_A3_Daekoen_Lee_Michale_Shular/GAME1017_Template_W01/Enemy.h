@@ -9,6 +9,7 @@
 #include <vector>
 #include "PathNode.h"
 #include  "Tile.h"
+#include "Bullet.h"
 
 class MeleeEnemy : public AnimatedSprite
 {
@@ -73,7 +74,7 @@ class RangeEnemy : public AnimatedSprite
 {
 public:
 public:
-	RangeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Tile*> obs, int sstart, int smin, int smax, int nf);
+	RangeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Bullet*>* EB , std::vector<Tile*> obs, int sstart, int smin, int smax, int nf);
 	~RangeEnemy();
 	void Update(Player* player, bool a, std::vector<PathNode*> b);
 	void Render();
@@ -102,7 +103,7 @@ private:
 	enum chasing_state
 	{
 		a_chasing,
-		Ranged_attack
+		Ranged_attack,
 	} attacksate;
 	bool m_dir, m_alive = true, m_canHit;
 	void SetState(int s);
@@ -126,6 +127,7 @@ private:
 	SDL_FRect m_rSearch;
 	double dx, dy, x, y;
 	std::vector<Tile*> obs;
+	std::vector<Bullet*>* bVec;
 
 };
 

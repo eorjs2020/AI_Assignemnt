@@ -84,7 +84,7 @@ void PlayState::Enter()
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile")));
 
 	m_RangeEnemy.push_back(new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4));
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"),&m_pEnemyBullet ,m_pObstacle, 0, 0, 3, 4));
 
 	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
@@ -262,6 +262,10 @@ void PlayState::Update()
 		{
 			m_pPlayerBullet[i]->Update();
 		}
+		for (auto i = 0; i < (int)m_pEnemyBullet.size(); i++)
+		{
+			m_pEnemyBullet[i]->Update();
+		}
 
 		for (auto i = 0; i < m_Enemy.size(); ++i)
 		{
@@ -345,7 +349,7 @@ void PlayState::Update()
 			m_winCondition[0] = true;
 			if (m_enemyRespawnTimer[0] >= 600) {
 				m_RangeEnemy[0] = new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
+					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"),&m_pEnemyBullet ,m_pObstacle, 0, 0, 3, 4);
 				m_RangeEnemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
 				m_enemyRespawnTimer[0] = 0;
 			}
@@ -405,6 +409,11 @@ void PlayState::Render()
 	for (auto i = 0; i < (int)m_pPlayerBullet.size(); i++)
 	{
 		m_pPlayerBullet[i]->Render();
+	}
+	for (auto i = 0; i < (int)m_pEnemyBullet.size(); i++)
+	{
+		std::cout << "Render" << std::endl;
+		m_pEnemyBullet[i]->Render();
 	}
 	if (m_Debugmode)
 	{
@@ -496,8 +505,9 @@ void PlayState::CheckCollision()
 		for (int j = 0; j < Engine::Instance().GetBox().size(); j++)
 		{
 			if (Engine::Instance().GetBox()[j] == nullptr) continue;
-			SDL_Rect e = { Engine::Instance().GetBox()[j]->GetDstP()->x, Engine::Instance().GetBox()[j]->GetDstP()->y, 32.0f, 32.0f };
-			if (SDL_HasIntersection(&b, &e))
+			SDL_Rect e = { Engine::Instance().GetBox()[j]->GetDstP()->x, Engine::Instance().GetBox()[j]->GetDstP()->y, 
+				Engine::Instance().GetBox()[j]->GetDstP()->w, Engine::Instance().GetBox()[j]->GetDstP()->h };
+			if (SDL_HasIntersection(&b, &e) && !Engine::Instance().GetBox()[j]->IsDestroyed())
 			{
 				delete m_pPlayerBullet[i];
 				Engine::Instance().GetBox()[i]->getDmg();
@@ -509,6 +519,83 @@ void PlayState::CheckCollision()
 	}
 	if (m_bPBNull) CleanVector<Bullet*>(m_pPlayerBullet, m_bPBNull);
 
+	for (int i = 0; i < (int)m_pPlayerBullet.size(); i++)
+	{
+		SDL_Rect b = { m_pPlayerBullet[i]->GetDstP()->x, m_pPlayerBullet[i]->GetDstP()->y,
+			m_pPlayerBullet[i]->GetDstP()->w, m_pPlayerBullet[i]->GetDstP()->h };
+		for (int j = 0; j < (int)m_RangeEnemy.size(); j++)
+		{
+			if (m_RangeEnemy[j] == nullptr) continue;
+			SDL_Rect e = { m_RangeEnemy[j]->GetDstP()->x, m_RangeEnemy[j]->GetDstP()->y, 32, 32 };
+			if (SDL_HasIntersection(&b, &e))
+			{
+				m_RangeEnemy[j]->setHealth(-4);
+				delete m_pPlayerBullet[i];
+				m_pPlayerBullet[i] = nullptr;
+				m_bPBNull = true;
+				break;
+			}
+		}
+	}
+	if (m_bPBNull) CleanVector<Bullet*>(m_pPlayerBullet, m_bPBNull);
+
+	//Enemy Bullet
+	for (int i = 0; i < (int)m_pEnemyBullet.size(); i++)
+	{
+		SDL_Rect b = { m_pEnemyBullet[i]->GetDstP()->x, m_pEnemyBullet[i]->GetDstP()->y,
+			m_pEnemyBullet[i]->GetDstP()->w, m_pEnemyBullet[i]->GetDstP()->h };
+		for (int j = 0; j < Engine::Instance().GetBox().size(); j++)
+		{
+			if (Engine::Instance().GetBox()[j] == nullptr) continue;
+			SDL_Rect e = { Engine::Instance().GetBox()[j]->GetDstP()->x, Engine::Instance().GetBox()[j]->GetDstP()->y, 32.0f, 32.0f };
+			if (SDL_HasIntersection(&b, &e))
+			{
+				delete m_pEnemyBullet[i];
+				m_pEnemyBullet[i] = nullptr;
+				m_bEBNull = true;
+				break;
+			}
+		}
+	}
+	if (m_bEBNull) CleanVector<Bullet*>(m_pEnemyBullet, m_bEBNull);
+
+	for (int i = 0; i < (int)m_pEnemyBullet.size(); i++)
+	{
+		SDL_Rect b = { m_pEnemyBullet[i]->GetDstP()->x, m_pEnemyBullet[i]->GetDstP()->y,
+			m_pEnemyBullet[i]->GetDstP()->w, m_pEnemyBullet[i]->GetDstP()->h };
+		for (int j = 0; j < m_pObstacle.size(); j++)
+		{
+			if (m_pObstacle[j] == nullptr) continue;
+			SDL_Rect e = { m_pObstacle[j]->GetDstP()->x, m_pObstacle[j]->GetDstP()->y, 32, 32 };
+			if (SDL_HasIntersection(&b, &e))
+			{
+				delete m_pEnemyBullet[i];
+				m_pEnemyBullet[i] = nullptr;
+				m_bEBNull = true;
+				break;
+			}
+		}
+	}
+	if (m_bEBNull) CleanVector<Bullet*>(m_pEnemyBullet, m_bEBNull);
+
+	for (int i = 0; i < (int)m_pEnemyBullet.size(); i++)
+	{
+		SDL_Rect b = { m_pEnemyBullet[i]->GetDstP()->x, m_pEnemyBullet[i]->GetDstP()->y,
+			m_pEnemyBullet[i]->GetDstP()->w, m_pEnemyBullet[i]->GetDstP()->h };
+		
+		if (m_pPlayer == nullptr) continue;
+		SDL_Rect e = { m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, 32, 32 };
+		if (SDL_HasIntersection(&b, &e) && !Engine::Instance().GetBox()[i]->IsDestroyed())
+		{
+			m_pPlayer->setHealth(-4);
+			delete m_pEnemyBullet[i];
+			m_pEnemyBullet[i] = nullptr;
+			m_bEBNull = true;
+			break;
+		}
+		
+	}
+	if (m_bEBNull) CleanVector<Bullet*>(m_pEnemyBullet, m_bEBNull);
 }
 
 void PlayState::m_buildPatrolPath()
