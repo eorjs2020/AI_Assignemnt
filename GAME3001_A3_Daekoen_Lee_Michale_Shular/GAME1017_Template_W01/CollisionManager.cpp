@@ -147,3 +147,5 @@ bool CollisionManager::PlayerCollision(const SDL_Rect player, const int dX, cons
 	}
 	return false;
 }
+
+

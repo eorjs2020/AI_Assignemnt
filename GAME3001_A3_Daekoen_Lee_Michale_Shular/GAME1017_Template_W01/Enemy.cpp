@@ -68,7 +68,7 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 		if (!m_bLOS && m_bSearch)
 		{
 			//std::cout << "search" << std::endl;;
-			m_state = chasing;
+			//m_state = chasing;
 		}
 		break;
 	
@@ -84,7 +84,7 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			/*	if(HasLineofSight())
 					Move2Full(destAngle);
 				else*/
-			MAMA::SetDeltas(destAngle, dx, dy, 3.0, 3.0);
+			MAMA::SetDeltas(destAngle, dx, dy, 2.0, 2.0);
 			
 			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, dx, 0))
 				GetDstP()->x += dx;

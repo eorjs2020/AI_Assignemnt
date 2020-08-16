@@ -137,7 +137,7 @@ void PlayState::RenderGrid()
 		}
 		for (int i = 0; i < m_HidingNode.size(); ++i)
 		{			
-			auto colour = (!m_HidingNode[i]->getLOS()) ? glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+			auto colour = (m_HidingNode[i]->getLOS()) ? glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 			DEMA::DrawRect(m_HidingNode[i]->GetPos() - glm::vec2(m_HidingNode[i]->GetWidth() * 0.5f,
 				m_HidingNode[i]->GetHeight() * 0.5f),
 					32, 32, colour);
@@ -231,7 +231,7 @@ void PlayState::Update()
 			}
 		}
 		//LOS = 0;
-		
+
 		if (m_Enemy[0] != nullptr) {
 			PlayerHasLinofSight1 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
 			PlayerHasLinofSight2 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
@@ -239,10 +239,10 @@ void PlayState::Update()
 			PlayerHasLinofSight4 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
 			PlayerHasLinofSight5 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
 		}
-	}
-	//LOS = 0;
-	SetLOS();
-	
+
+		//LOS = 0;
+		SetLOS();
+
 
 		if (PlayerHasLinofSight1 && PlayerHasLinofSight2 && PlayerHasLinofSight3 &&
 			PlayerHasLinofSight4 && PlayerHasLinofSight5)
@@ -275,7 +275,7 @@ void PlayState::Update()
 				}
 			}
 		}
-
+	
 		if (m_Enemy[0] != nullptr) {
 			m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
 			m_winCondition[0] = false;
@@ -285,8 +285,8 @@ void PlayState::Update()
 			m_enemyRespawnTimer[0]++;
 			m_winCondition[0] = true;
 			if (m_enemyRespawnTimer[0] >= 600) {
-				m_Enemy[0] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+				m_Enemy[0] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
 				m_Enemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
 				m_enemyRespawnTimer[0] = 0;
 			}
@@ -300,8 +300,8 @@ void PlayState::Update()
 			m_enemyRespawnTimer[1]++;
 			m_winCondition[1] = true;
 			if (m_enemyRespawnTimer[1] >= 600) {
-				m_Enemy[1] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+				m_Enemy[1] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathTwo[targetNode + 1]->GetPos().x, m_pPatrolPathTwo[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
 				m_Enemy[1]->SetDstXY(m_pPatrolPathTwo[0]->GetPos().x - 15, m_pPatrolPathTwo[0]->GetPos().y - 16);
 				m_enemyRespawnTimer[1] = 0;
 			}
@@ -315,8 +315,8 @@ void PlayState::Update()
 			m_enemyRespawnTimer[2]++;
 			m_winCondition[2] = true;
 			if (m_enemyRespawnTimer[2] >= 600) {
-				m_Enemy[2] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+				m_Enemy[2] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathThree[targetNode + 1]->GetPos().x, m_pPatrolPathThree[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
 				m_Enemy[2]->SetDstXY(m_pPatrolPathThree[0]->GetPos().x - 15, m_pPatrolPathThree[0]->GetPos().y - 16);
 				m_enemyRespawnTimer[2] = 0;
 			}
@@ -349,6 +349,7 @@ void PlayState::Update()
 				m_Enemy[i] = nullptr;
 			}
 		}
+
 		m_enemiesKilled = "Enemies Killed: " + std::to_string(m_score);
 		m_gamestatus->SetText(m_enemiesKilled);
 		if (!m_pPlayer->getAlive()) {
