@@ -66,7 +66,7 @@ void PlayState::Enter()
 	m_buildPatrolPath();
 	m_displayPatrolPath();
 	// Final engine initialization calls.
-	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,32.0f,32.0f },
+	m_pPlayer = new Player({ 0,47,15,20 }, { m_pGrid[643]->GetPos().x, m_pGrid[643]->GetPos().y,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
 	m_Enemy.push_back(new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"),m_pObstacle ,0, 0, 3, 4));
@@ -85,6 +85,8 @@ void PlayState::Enter()
 
 	m_RangeEnemy.push_back(new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"),&m_pEnemyBullet ,m_pObstacle, 0, 0, 3, 4));
+	m_RangeEnemy.push_back(new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathFour[0]->GetPos().x, m_pPatrolPathFour[0]->GetPos().y ,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4));
 
 	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
@@ -340,18 +342,18 @@ void PlayState::Update()
 			}
 		}
 		if (m_RangeEnemy[0] != nullptr) {
-			m_RangeEnemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
-			m_winCondition[0] = false;
+			m_RangeEnemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathFour);
+			m_winCondition[3] = false;
 		}
 		//Enemy respawn reset timer and position 
 		else {
-			m_enemyRespawnTimer[0]++;
-			m_winCondition[0] = true;
-			if (m_enemyRespawnTimer[0] >= 600) {
-				m_RangeEnemy[0] = new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"),&m_pEnemyBullet ,m_pObstacle, 0, 0, 3, 4);
-				m_RangeEnemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
-				m_enemyRespawnTimer[0] = 0;
+			m_enemyRespawnTimer[3]++;
+			m_winCondition[3] = true;
+			if (m_enemyRespawnTimer[3] >= 600) {
+				m_RangeEnemy[0] = new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathFour[targetNode + 1]->GetPos().x, m_pPatrolPathFour[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
+				m_RangeEnemy[0]->SetDstXY(m_pPatrolPathFour[0]->GetPos().x - 15, m_pPatrolPathFour[0]->GetPos().y - 16);
+				m_enemyRespawnTimer[3] = 0;
 			}
 		}
 
@@ -365,6 +367,14 @@ void PlayState::Update()
 				++m_score;
 				delete m_Enemy[i];
 				m_Enemy[i] = nullptr;
+			}
+		}
+		for (auto i = 0; i < m_RangeEnemy.size(); ++i) {
+			if (m_RangeEnemy[i] != nullptr && m_RangeEnemy[i]->getAlive() == false)
+			{
+				++m_score;
+				delete m_RangeEnemy[i];
+				m_RangeEnemy[i] = nullptr;
 			}
 		}
 
@@ -634,15 +644,22 @@ void PlayState::m_buildPatrolPath()
 		m_pPatrolPathThree.push_back(m_pGrid[253]);
 		m_pPatrolPathThree.push_back(m_pGrid[320]);
 	std::cout << "Number of Nodes for path three: " << m_pPatrolPathThree.size() << std::endl;
-
+	//Path Four
+	m_pPatrolPathFour.push_back(m_pGrid[245]);
+	m_pPatrolPathFour.push_back(m_pGrid[242]);
+	m_pPatrolPathFour.push_back(m_pGrid[241]);
+	m_pPatrolPathFour.push_back(m_pGrid[239]);
 	// creation of Hiding Nodes
-	m_HidingNode.push_back(m_pGrid[150]);
-	m_HidingNode.push_back(m_pGrid[217]);
-	m_HidingNode.push_back(m_pGrid[229]);
-	m_HidingNode.push_back(m_pGrid[366]);
-	m_HidingNode.push_back(m_pGrid[501]);
-	m_HidingNode.push_back(m_pGrid[582]);
-	m_HidingNode.push_back(m_pGrid[633]);
+	m_HidingNode.push_back(m_pGrid[116]);
+	m_HidingNode.push_back(m_pGrid[197]);
+	m_HidingNode.push_back(m_pGrid[187]);
+	m_HidingNode.push_back(m_pGrid[339]);
+	m_HidingNode.push_back(m_pGrid[357]);
+	m_HidingNode.push_back(m_pGrid[473]);
+	m_HidingNode.push_back(m_pGrid[490]);
+	m_HidingNode.push_back(m_pGrid[634]);
+	m_HidingNode.push_back(m_pGrid[651]);
+	m_HidingNode.push_back(m_pGrid[677]);
 
 }
 
@@ -682,17 +699,20 @@ void StartState::Update()
 void StartState::Render()
 {
 	SDL_RenderClear(Engine::Instance().GetRenderer());
+	m_background->Render();
 	m_StartBtn->Render();
 	State::Render();
 	m_nameOne->Render();
 	m_nameTwo->Render();
+	
 }
 
 void StartState::Enter()
 {
-	
-	m_StartBtn = new PlayButton({ 0, 0, 67, 15 }, { 380.0f, 350.0f, 268, 60},
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
+	m_background = new Sprite({ 0, 0, 576, 336 }, {0 ,0 , 1024.0f,768.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("background"));
+	m_StartBtn = new PlayButton({ 0, 0, 200, 80 }, { 380.0f, 350.0f, 268, 60},
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("start"));
 	std::string c = "Michael Shular 101273089", d = "Daekoen Lee 101076401";
 	m_nameOne = new Label("tile", 420, 180, c, { 255, 255, 255, 255 });
 	m_nameTwo = new Label("tile", 420, 140, d, { 255, 255, 255, 255 });
