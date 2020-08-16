@@ -48,17 +48,19 @@ private:
 		a_chasing,
 		melee_attack
 	} attacksate;
-	bool m_dir, m_alive = true;
+	bool m_dir, m_alive = true, m_canHit;
 	void SetState(int s);
-	int m_health, m_targetnode = 1, m_alivetimer = 0;
+	int m_health, m_targetnode = 1, m_alivetimer = 0, hittimer;
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
+	Sprite* m_sword;
 	double m_accelX,
 		m_accelY,
 		m_velX,
 		m_maxVelX,
 		m_velY,
-		m_maxVelY;
+		m_maxVelY, 
+		destAngle;
 	glm::vec2 m_ePos;
 	glm::vec2 m_Vel;
 	int m_iLOS, alarm;

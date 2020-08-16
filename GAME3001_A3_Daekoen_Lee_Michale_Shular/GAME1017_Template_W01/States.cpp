@@ -325,20 +325,6 @@ void PlayState::Update()
 
 		m_pPlayer->Update(m_box, m_boxHP);
 		CheckCollision();
-		for (auto i = 0; i < m_Enemy.size(); ++i)
-		{
-			if (m_Enemy[i] != nullptr && COMA::AABBCheck({ m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h },
-				{ m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y, m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h }) && m_canHit == true) {
-				m_pPlayer->setHealth(-4);
-				m_canHit = false;
-				std::cout << "hit\n";
-			}
-		}
-		++m_hitCoolDown;
-		if (m_hitCoolDown >= 60) {
-			m_hitCoolDown = 0;
-			m_canHit = true;
-		}
 		for (auto i = 0; i < m_Enemy.size(); ++i) {
 			//if (m_Enemy[i]->getAlive() == false)
 			//	++m_score;

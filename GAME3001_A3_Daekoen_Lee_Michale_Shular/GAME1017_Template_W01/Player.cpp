@@ -59,7 +59,6 @@ void Player::Update(Sprite* a[], int b[])
 		if (EVMA::KeyReleased(SDL_SCANCODE_W) || EVMA::KeyReleased(SDL_SCANCODE_S) ||
 			EVMA::KeyReleased(SDL_SCANCODE_A) || EVMA::KeyReleased(SDL_SCANCODE_D))
 		{
-			//?????????
 			SetState(idle);
 			this->setSrcP(0, 47);
 			break; // Skip movement parsing below.

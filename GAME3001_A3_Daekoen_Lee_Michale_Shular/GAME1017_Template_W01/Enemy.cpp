@@ -21,6 +21,9 @@ MeleeEnemy::MeleeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t,
 	this->obs = obs;
 	attacksate = a_chasing;
 	m_angle = 0.0;
+	destAngle = 0;
+	m_canHit = true;
+	hittimer = 0;
 }
 
 MeleeEnemy::~MeleeEnemy()
@@ -68,19 +71,21 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 		if (!m_bLOS && m_bSearch)
 		{
 			//std::cout << "search" << std::endl;;
-			//m_state = chasing;
+			m_state = chasing;
 		}
 		break;
 	
 	case chasing:
-		
+		destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
+				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
 		switch (attacksate)
 		{
 		case a_chasing:
+			if (COMA::AABBCheck(*player->GetDstP(), *this->GetDstP())){
+				attacksate = melee_attack;
+			}
 
-
-			double destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
-				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
+			
 			/*	if(HasLineofSight())
 					Move2Full(destAngle);
 				else*/
@@ -90,9 +95,33 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 				GetDstP()->x += dx;
 			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, 0, dy))
 				GetDstP()->y += dy;
-
+			
 			break;
-
+		case melee_attack:
+			if (m_sword == nullptr) {
+				m_sword = new AnimatedSprite({ 0, 109, 30, 12 }, { m_dst.x + 16, m_dst.y + 16, 30.0f, 12.0f },
+					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 0, 10);
+			}
+			else
+			{
+				if (COMA::AABBCheck(*player->GetDstP(), *m_sword->GetDstP()) && m_canHit == true) {
+					player->setHealth(-4);
+					m_canHit = false;
+					std::cout << "hit\n";
+				}
+				m_sword->SetAngle(destAngle);
+				++hittimer;
+				if (hittimer >= 60)
+				{
+					hittimer = 0;
+					m_canHit = true;
+					attacksate = a_chasing;
+					SetState(idle);
+					m_sword = nullptr;
+				}
+				
+			}
+			break;
 		}
 	case flee:
 		
@@ -126,6 +155,8 @@ void MeleeEnemy::Render()
 	SDL_RenderCopyExF(m_pRend, m_pText, GetSrcP(), GetDstP(), 0, 0, static_cast<SDL_RendererFlip>(m_dir));
 	m_healthBarRed->Render();
 	m_healthBarGreen->Render();
+	if(m_sword != nullptr)
+		m_sword->Render();
 	//SDL_RenderDrawRectF(m_pRend, &m_rSearch);
 }
 
