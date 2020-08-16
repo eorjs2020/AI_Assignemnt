@@ -83,6 +83,9 @@ void PlayState::Enter()
 		Engine::Instance().GetLevel()[4][5]->GetDstP()->y,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile")));
 
+	m_RangeEnemy.push_back(new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4));
+
 	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 	
@@ -273,6 +276,19 @@ void PlayState::Update()
 				}
 			}
 		}
+		for (auto i = 0; i < m_RangeEnemy.size(); ++i)
+		{
+			if (m_RangeEnemy[i] != nullptr && m_pPlayer->getAttack() == true && m_pPlayer->getOneAttack() == false) {
+				AnimatedSprite* tempW = &m_pPlayer->getSword();
+				SDL_FRect tempS = { tempW->GetDstP()->x, tempW->GetDstP()->y, tempW->GetDstP()->w, tempW->GetDstP()->h };
+				SDL_FRect tempE = { m_Enemy[i]->GetDstP()->x, m_RangeEnemy[i]->GetDstP()->y, m_RangeEnemy[i]->GetDstP()->w, m_RangeEnemy[i]->GetDstP()->h };
+				if (COMA::AABBCheck(tempS, tempE)) {
+					std::cout << "attack\n";
+					m_pPlayer->setOneAttack(true);
+					m_RangeEnemy[i]->setHealth(-4);
+				}
+			}
+		}
 	
 		if (m_Enemy[0] != nullptr) {
 			m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
@@ -319,7 +335,21 @@ void PlayState::Update()
 				m_enemyRespawnTimer[2] = 0;
 			}
 		}
-
+		if (m_RangeEnemy[0] != nullptr) {
+			m_RangeEnemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
+			m_winCondition[0] = false;
+		}
+		//Enemy respawn reset timer and position 
+		else {
+			m_enemyRespawnTimer[0]++;
+			m_winCondition[0] = true;
+			if (m_enemyRespawnTimer[0] >= 600) {
+				m_RangeEnemy[0] = new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
+				m_RangeEnemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
+				m_enemyRespawnTimer[0] = 0;
+			}
+		}
 
 		m_pPlayer->Update();
 		CheckCollision();
@@ -367,6 +397,10 @@ void PlayState::Render()
 	for (auto i = 0; i < m_Enemy.size(); ++i){
 		if (m_Enemy[i] != nullptr)
 			m_Enemy[i]->Render();
+	}
+	for (auto i = 0; i < m_RangeEnemy.size(); ++i) {
+		if (m_RangeEnemy[i] != nullptr)
+			m_RangeEnemy[i]->Render();
 	}
 	for (auto i = 0; i < (int)m_pPlayerBullet.size(); i++)
 	{

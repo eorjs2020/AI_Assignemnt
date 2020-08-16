@@ -72,7 +72,8 @@ private:
 class RangeEnemy : public AnimatedSprite
 {
 public:
-	RangeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
+public:
+	RangeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Tile*> obs, int sstart, int smin, int smax, int nf);
 	~RangeEnemy();
 	void Update(Player* player, bool a, std::vector<PathNode*> b);
 	void Render();
@@ -86,26 +87,37 @@ public:
 	void SetY(float y);
 	double GetVelX();
 	double GetVelY();
+	void SetVs(const double angle);
+	void Move2Full(double& angle);
 	glm::vec2 getVel() { return m_Vel; }
 	glm::vec2 getPos();
 	void setPosX(double x) { m_dst.x += x; }
 	void setPosY(double y) { m_dst.y += y; }
 	void RenderRadius(int rad, int x, int y);
 	bool getAlive() { return m_alive; }
-
+	void SetLineofSight(bool los) { m_bLOS = los; }
+	bool HasLineofSight() { return  m_bLOS; }
 private:
-	enum state { idle, running, death } m_state;
-	bool m_dir, m_alive = true;
+	enum state { idle, chasing, flee, death } m_state;
+	enum chasing_state
+	{
+		a_chasing,
+		Ranged_attack
+	} attacksate;
+	bool m_dir, m_alive = true, m_canHit;
 	void SetState(int s);
-	int m_health, m_targetnode = 1, m_alivetimer = 0;
+	int m_health, m_targetnode = 1, m_alivetimer = 0, hitTimer;
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
+	Sprite* m_sword;
 	double m_accelX,
 		m_accelY,
 		m_velX,
 		m_maxVelX,
 		m_velY,
-		m_maxVelY;
+		m_maxVelY,
+		destAngle,
+		m_dirtionXCheck;
 	glm::vec2 m_ePos;
 	glm::vec2 m_Vel;
 	int m_iLOS, alarm;
@@ -113,6 +125,7 @@ private:
 	bool m_bSearch;
 	SDL_FRect m_rSearch;
 	double dx, dy, x, y;
+	std::vector<Tile*> obs;
 
 };
 
