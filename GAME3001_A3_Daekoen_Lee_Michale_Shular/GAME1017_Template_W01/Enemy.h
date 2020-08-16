@@ -8,16 +8,16 @@
 #include "vec2.hpp"
 #include <vector>
 #include "PathNode.h"
-
+#include  "Tile.h"
 class Enemy : public AnimatedSprite
 {
-
+	
 };
 
 class MeleeEnemy : public AnimatedSprite
 {
 public:
-	MeleeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf);
+	MeleeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Tile*> obs ,int sstart, int smin, int smax, int nf);
 	~MeleeEnemy();
 	void Update(Player* player, bool a, std::vector<PathNode*> b);
 	void Render();
@@ -31,15 +31,23 @@ public:
 	void SetY(float y);
 	double GetVelX();
 	double GetVelY();
+	void SetVs(const double angle);
+	void Move2Full(double& angle);
 	glm::vec2 getVel() { return m_Vel; }
 	glm::vec2 getPos();
 	void setPosX(double x) { m_dst.x += x; }
 	void setPosY(double y) { m_dst.y += y; }
 	void RenderRadius(int rad, int x, int y);
 	bool getAlive() { return m_alive; }
-	
+	void SetLineofSight(bool los) { m_bLOS = los; }
+	bool HasLineofSight() {return  m_bLOS; }
 private:
-	enum state { idle, running, death } m_state;
+	enum state { idle, chasing, flee ,death } m_state;
+	enum chasing_state 
+	{
+		a_chasing,
+		melee_attack
+	} attacksate;
 	bool m_dir, m_alive = true;
 	void SetState(int s);
 	int m_health, m_targetnode = 1, m_alivetimer = 0;
@@ -58,6 +66,7 @@ private:
 	bool m_bSearch;
 	SDL_FRect m_rSearch;
 	double dx, dy, x, y;
+	std::vector<Tile*> obs;
 	
 };
 
