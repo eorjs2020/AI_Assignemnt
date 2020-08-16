@@ -40,6 +40,11 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 	SDL_FRect tempP = { player->GetDstP()->x, player->GetDstP()->y, player->GetDstP()->w, player->GetDstP()->h };
 	m_bSearch = COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 300, tempP);
 	m_dirtionXCheck = m_dst.x;
+	
+	if (m_health <= 0)
+	{
+		SetState(death);
+	}
 	switch (m_state)
 	{
 	case idle:
@@ -64,10 +69,7 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			}
 
 		}
-		if (m_health <= 0)
-		{
-			SetState(death);
-		}
+		
 		if (!m_bLOS && m_bSearch)
 		{
 			//std::cout << "search" << std::endl;;
@@ -76,30 +78,37 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 		break;
 	
 	case chasing:
-		
+
 		if (m_health < 10)
 		{
 			m_state = flee;
+			attacksate = a_chasing;
 		}
-		destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
-				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
+
 		switch (attacksate)
 		{
 		case a_chasing:
 			if (COMA::AABBCheck(*player->GetDstP(), *this->GetDstP())){
 				attacksate = melee_attack;
 			}
-
+			destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
+				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
+			MAMA::SetDeltas(destAngle, dx, dy, 2.0, 2.0);
 			
 			/*	if(HasLineofSight())
 					Move2Full(destAngle);
 				else*/
-			MAMA::SetDeltas(destAngle, dx, dy, 2.0, 2.0);
-			
+		
 			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, dx, 0))
 				GetDstP()->x += dx;
+			else
+				GetDstP()->y += dx;
 			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, 0, dy))
 				GetDstP()->y += dy;
+			else
+				GetDstP()->x += dy;
+		
+		
 			break;
 		case melee_attack:
 			if (m_sword == nullptr) {
@@ -144,8 +153,26 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			break;
 		}
 	case flee:
-		
+		if (m_health < 10)
+		{
+			destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
+				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
+			MAMA::SetDeltas(destAngle, dx, dy, 2.0, 2.0);
 
+			/*	if(HasLineofSight())
+					Move2Full(destAngle);
+				else*/
+
+			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, dx, 0))
+				GetDstP()->x += -dx;
+		
+			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, 0, dy))
+				GetDstP()->y += -dy;
+		
+		}
+		else
+			break;
+	
 		break;
 
 	case death:
@@ -276,8 +303,8 @@ void MeleeEnemy::SetState(int s)
 
 //RangeEnemy
 
-RangeEnemy::RangeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Tile*> obs, int sstart, int smin, int smax, int nf)
-	:AnimatedSprite(s, d, r, t, sstart, smin, smax, nf), m_state(idle), m_dir(0) {
+RangeEnemy::RangeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Bullet*>* EB, std::vector<Tile*> obs, int sstart, int smin, int smax, int nf)
+	:AnimatedSprite(s, d, r, t, sstart, smin, smax, nf), m_state(idle), m_dir(0), bVec(EB) {
 	m_health = 40;
 	m_healthBarGreen = new Sprite({ 0,25,100,9 }, { d.x,d.y - 16, 40.0, 4.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Button"));
@@ -311,6 +338,10 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 	SDL_FRect tempP = { player->GetDstP()->x, player->GetDstP()->y, player->GetDstP()->w, player->GetDstP()->h };
 	m_bSearch = COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 300, tempP);
 	m_dirtionXCheck = m_dst.x;
+	if (m_health <= 0)
+	{
+		SetState(death);
+	}
 	switch (m_state)
 	{
 	case idle:
@@ -335,10 +366,7 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			}
 
 		}
-		if (m_health <= 0)
-		{
-			SetState(death);
-		}
+		
 		if (!m_bLOS && m_bSearch)
 		{
 			//std::cout << "search" << std::endl;;
@@ -357,7 +385,7 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 		switch (attacksate)
 		{
 		case a_chasing:
-			if (COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 300, tempP)) {
+			if (COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 300, tempP) && !HasLineofSight()) {
 				attacksate = Ranged_attack;
 			}
 
@@ -378,12 +406,20 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 0, 10);
 				m_sword->SetAngle(-45);
 				if (m_dir == 1) {
+					std::cout << "HitR" << std::endl;
 					m_sword->SetDstXY(this->GetDstP()->x - 16, this->GetDstP()->y);
 					m_sword->SetFilp(SDL_FLIP_HORIZONTAL);
+					bVec->push_back(new Bullet({ 0,126,14,6 }, { GetDstP()->x + GetDstP()->w / 2 ,GetDstP()->y + GetDstP()->h / 2, 14, 6 },
+						Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 10, glm::vec2(player->GetDstP()->x + player->GetDstP()->w / 2
+							, player->GetDstP()->y + player->GetDstP()->h / 2)));
 				}
 				else {
 					m_sword->SetAngle(45);
 					m_sword->SetDstXY(this->GetDstP()->x - 32, this->GetDstP()->y);
+					bVec->push_back(new Bullet({ 0,126,14,6 }, { GetDstP()->x + GetDstP()->w / 2 ,GetDstP()->y + GetDstP()->h / 2, 14, 6 },
+						Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 10, glm::vec2(player->GetDstP()->x + player->GetDstP()->w / 2
+							, player->GetDstP()->y + player->GetDstP()->h / 2)));
+					std::cout << "HitR" << std::endl;
 				}
 			}
 			else
