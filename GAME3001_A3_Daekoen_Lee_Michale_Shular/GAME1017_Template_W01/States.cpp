@@ -68,12 +68,12 @@ void PlayState::Enter()
 	// Final engine initialization calls.
 	m_pPlayer = new Player({ 0,47,15,20 }, { 60.0f,200.0f,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
-	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
-	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathTwo[0]->GetPos().x, m_pPatrolPathTwo[0]->GetPos().y ,32.0f,32.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
-	m_Enemy.push_back(new Enemy({ 0,88,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4));
+	m_Enemy.push_back(new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"),m_pObstacle ,0, 0, 3, 4));
+	m_Enemy.push_back(new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathTwo[0]->GetPos().x, m_pPatrolPathTwo[0]->GetPos().y ,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4));
+	m_Enemy.push_back(new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4));
 	
 	
 	m_Enemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
@@ -84,18 +84,23 @@ void PlayState::Enter()
 	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
 	
-	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[10][5]->GetDstP()->x , Engine::Instance().GetLevel()[10][5]->GetDstP()->y - 16,
-		Engine::Instance().GetLevel()[10][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[10][5]->GetDstP()->h * 2 });
-	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[7][21]->GetDstP()->x, Engine::Instance().GetLevel()[7][22]->GetDstP()->y - 16,
-		Engine::Instance().GetLevel()[7][22]->GetDstP()->w * 8 , Engine::Instance().GetLevel()[7][22]->GetDstP()->h * 2 + 1 });
-	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[14][18]->GetDstP()->x , Engine::Instance().GetLevel()[14][18]->GetDstP()->y ,
-		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 2 + 1 });
-	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[18][27]->GetDstP()->x , Engine::Instance().GetLevel()[18][27]->GetDstP()->y ,
-		Engine::Instance().GetLevel()[9][6]->GetDstP()->w * 8 + 7, Engine::Instance().GetLevel()[9][6]->GetDstP()->h * 2 + 1 });
-	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[22][9]->GetDstP()->x , Engine::Instance().GetLevel()[22][9]->GetDstP()->y - 16 ,
-		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 2 + 1, Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 8  });
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[8][1]->GetDstP()->x , Engine::Instance().GetLevel()[8][1]->GetDstP()->y ,
+		Engine::Instance().GetLevel()[9][1]->GetDstP()->w * 8 + 16, Engine::Instance().GetLevel()[10][6]->GetDstP()->h * 2});
+	
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[12][13]->GetDstP()->x + 16, Engine::Instance().GetLevel()[12][13]->GetDstP()->y,
+		Engine::Instance().GetLevel()[7][21]->GetDstP()->w * 9 , Engine::Instance().GetLevel()[7][21]->GetDstP()->h * 2});
+	
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[5][16]->GetDstP()->x, Engine::Instance().GetLevel()[5][16]->GetDstP()->y,
+		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 9 , Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 2});
+	
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[16][22]->GetDstP()->x , Engine::Instance().GetLevel()[16][22]->GetDstP()->y ,
+		Engine::Instance().GetLevel()[9][6]->GetDstP()->w * 9, Engine::Instance().GetLevel()[9][6]->GetDstP()->h * 2 });
+	
+	m_pLOSobs.push_back({ Engine::Instance().GetLevel()[17][7]->GetDstP()->x , Engine::Instance().GetLevel()[17][7]->GetDstP()->y,
+		Engine::Instance().GetLevel()[9][5]->GetDstP()->w * 3 , Engine::Instance().GetLevel()[9][5]->GetDstP()->h * 8  });
 
-	std::cout << Engine::Instance().GetLevel()[8][1]->GetDstP()->x << " , " << Engine::Instance().GetLevel()[8][1]->GetDstP()->y << std::endl;
+
+	
 	m_gamestatus = new Label("tile", 420, 700, m_enemiesKilled, { 255, 255, 255, 255 });
 	SOMA::SetSoundVolume(10);
 	SOMA::SetMusicVolume(7);
@@ -205,13 +210,7 @@ void PlayState::Update()
 	}
 	//LOS = 0;
 	SetLOS();
-	if (m_Enemy[0] != nullptr) {
-		PlayerHasLinofSight1 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-		PlayerHasLinofSight2 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-		PlayerHasLinofSight3 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-		PlayerHasLinofSight4 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-		PlayerHasLinofSight5 = COMA::LOSCheck(m_pPlayer, m_Enemy[0], &m_pLOSobs[0]);
-	}
+	
 
 	if (PlayerHasLinofSight1 && PlayerHasLinofSight2 && PlayerHasLinofSight3 &&
 		PlayerHasLinofSight4 && PlayerHasLinofSight5)
@@ -251,8 +250,8 @@ void PlayState::Update()
 	else {
 		m_enemyRespawnTimer[0]++;
 		if (m_enemyRespawnTimer[0] >= 240) {
-			m_Enemy[0] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+			m_Enemy[0] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
 			m_Enemy[0]->SetDstXY(m_pPatrolPathOne[0]->GetPos().x - 15, m_pPatrolPathOne[0]->GetPos().y - 16);
 			m_enemyRespawnTimer[0] = 0;
 		}
@@ -263,8 +262,8 @@ void PlayState::Update()
 	else {
 		m_enemyRespawnTimer[1]++;
 		if (m_enemyRespawnTimer[1] >= 240) {
-			m_Enemy[1] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+			m_Enemy[1] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
 			m_Enemy[1]->SetDstXY(m_pPatrolPathTwo[0]->GetPos().x - 15, m_pPatrolPathTwo[0]->GetPos().y - 16);
 			m_enemyRespawnTimer[1] = 0;
 		}
@@ -275,8 +274,8 @@ void PlayState::Update()
 	else {
 		m_enemyRespawnTimer[2]++;
 		if (m_enemyRespawnTimer[2] >= 240) {
-			m_Enemy[2] = new Enemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 3, 4);
+			m_Enemy[2] = new MeleeEnemy({ 0,88,14,21 }, { m_pPatrolPathOne[targetNode + 1]->GetPos().x, m_pPatrolPathOne[targetNode + 1]->GetPos().y ,32.0f,32.0f },
+				Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
 			m_Enemy[2]->SetDstXY(m_pPatrolPathThree[0]->GetPos().x - 15, m_pPatrolPathThree[0]->GetPos().y - 16);
 			m_enemyRespawnTimer[2] = 0;
 		}
@@ -285,20 +284,7 @@ void PlayState::Update()
 
 	m_pPlayer->Update();
 	CheckCollision();
-	for (auto i = 0; i < m_Enemy.size(); ++i)
-	{
-		if (m_Enemy[i] != nullptr && COMA::AABBCheck({ m_pPlayer->GetDstP()->x, m_pPlayer->GetDstP()->y, m_pPlayer->GetDstP()->w, m_pPlayer->GetDstP()->h },
-			{ m_Enemy[i]->GetDstP()->x, m_Enemy[i]->GetDstP()->y, m_Enemy[i]->GetDstP()->w, m_Enemy[i]->GetDstP()->h }) && m_canHit == true ) {
-			m_pPlayer->setHealth(-4);
-			m_canHit = false;
-			std::cout << "hit\n";
-		}
-	}
-	++m_hitCoolDown;
-	if (m_hitCoolDown >= 60){
-		m_hitCoolDown = 0;
-		m_canHit = true;
-	}
+
 	for (auto i = 0; i < m_Enemy.size(); ++i) {
 		//if (m_Enemy[i]->getAlive() == false)
 		//	++m_score;
@@ -434,7 +420,7 @@ void PlayState::m_buildPatrolPath()
 	}
 	std::cout << "Number of Nodes for path One: " << m_pPatrolPathOne.size() << std::endl;
 	//Path two
-	for (auto i = 23; i > 20; i--)
+	for (auto i = 24; i > 20; i--)
 	{
 		m_pPatrolPathTwo.push_back(m_pGrid[(32 * i - 2)]);
 	}
@@ -460,9 +446,15 @@ bool PlayState::EnemyHasLOS(int n)
 	
 	for (auto i = 0; i < m_pLOSobs.size(); ++i)
 	{
+		
 		if (!COMA::LOSCheck(m_pPlayer, m_Enemy[n], &m_pLOSobs[i]))
+		{
+			m_Enemy[n]->SetLineofSight(true);
 			return true;
+		}
+		
 	}
+	m_Enemy[n]->SetLineofSight(false);
 	return false;
 }
 

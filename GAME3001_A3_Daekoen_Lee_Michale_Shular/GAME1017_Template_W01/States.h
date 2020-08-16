@@ -38,7 +38,7 @@ private:
 	std::vector<PathNode*> m_pPatrolPathTwo;
 	std::vector<PathNode*> m_pPatrolPathThree;
 	std::vector<Bullet*> m_pPlayerBullet;
-	std::vector<Enemy*> m_Enemy;
+	std::vector<MeleeEnemy*> m_Enemy;
 	glm::vec2 m_pMousePos;
 	bool m_bPBNull;
 	bool m_bCanShoot = true;
