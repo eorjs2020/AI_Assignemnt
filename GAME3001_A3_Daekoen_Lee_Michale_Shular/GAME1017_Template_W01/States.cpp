@@ -502,7 +502,7 @@ void PlayState::m_buildPatrolPath()
 	}
 	std::cout << "Number of Nodes for path One: " << m_pPatrolPathOne.size() << std::endl;
 	//Path two
-	for (auto i = 24; i > 20; i--)
+	for (auto i = 23; i > 20; i--)
 	{
 		m_pPatrolPathTwo.push_back(m_pGrid[(32 * i - 2)]);
 	}

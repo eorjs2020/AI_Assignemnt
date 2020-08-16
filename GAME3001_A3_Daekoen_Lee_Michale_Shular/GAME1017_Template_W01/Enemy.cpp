@@ -23,7 +23,7 @@ MeleeEnemy::MeleeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t,
 	m_angle = 0.0;
 	destAngle = 0;
 	m_canHit = true;
-	hittimer = 0;
+	hitTimer = 0;
 }
 
 MeleeEnemy::~MeleeEnemy()
@@ -39,7 +39,7 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 	m_rSearch.h = 200;
 	SDL_FRect tempP = { player->GetDstP()->x, player->GetDstP()->y, player->GetDstP()->w, player->GetDstP()->h };
 	m_bSearch = COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 300, tempP);
-
+	m_dirtionXCheck = m_dst.x;
 	switch (m_state)
 	{
 	case idle:
@@ -95,25 +95,41 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 				GetDstP()->x += dx;
 			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, 0, dy))
 				GetDstP()->y += dy;
-			
 			break;
 		case melee_attack:
 			if (m_sword == nullptr) {
-				m_sword = new AnimatedSprite({ 0, 109, 30, 12 }, { m_dst.x + 16, m_dst.y + 16, 30.0f, 12.0f },
+				m_sword = new AnimatedSprite({ 0, 109, 30, 12 }, { m_dst.x -16, m_dst.y -16 , 30.0f, 12.0f },
 					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), 0, 0, 0, 10);
+				m_sword->SetAngle(-45);
+				if (m_dir == 1) {
+					m_sword->SetDstXY(this->GetDstP()->x - 16, this->GetDstP()->y);
+					m_sword->SetFilp(SDL_FLIP_HORIZONTAL);
+				}
+				else {
+					m_sword->SetAngle(45);
+					m_sword->SetDstXY(this->GetDstP()->x - 32, this->GetDstP()->y);
+				}
 			}
 			else
 			{
+				if (hitTimer >= 30)
+					m_sword->SetAngle(0);
 				if (COMA::AABBCheck(*player->GetDstP(), *m_sword->GetDstP()) && m_canHit == true) {
 					player->setHealth(-4);
 					m_canHit = false;
 					std::cout << "hit\n";
 				}
-				m_sword->SetAngle(destAngle);
-				++hittimer;
-				if (hittimer >= 60)
+				if (m_dir == 1 && hitTimer >= 10) {
+					m_sword->SetDstXY(this->GetDstP()->x - 16, this->GetDstP()->y + 16);
+					m_sword->SetFilp(SDL_FLIP_HORIZONTAL);
+				}
+				else {
+					m_sword->SetDstXY(this->GetDstP()->x + 16, this->GetDstP()->y + 16);
+				}
+				++hitTimer;
+				if (hitTimer >= 60)
 				{
-					hittimer = 0;
+					hitTimer = 0;
 					m_canHit = true;
 					attacksate = a_chasing;
 					SetState(idle);
@@ -148,6 +164,13 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 	//}
 
 	m_healthBarGreen->SetDstWH(getHealth(), 4);
+	//This is to change direction of enemies sprite should be last calcutlation 
+	if (m_dst.x < m_dirtionXCheck){
+		m_dir = 1;
+	}
+	if (m_dst.x > m_dirtionXCheck) {
+		m_dir = 0;
+	}
 }
 
 void MeleeEnemy::Render()

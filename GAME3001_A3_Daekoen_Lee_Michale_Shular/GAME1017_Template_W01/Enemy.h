@@ -50,7 +50,7 @@ private:
 	} attacksate;
 	bool m_dir, m_alive = true, m_canHit;
 	void SetState(int s);
-	int m_health, m_targetnode = 1, m_alivetimer = 0, hittimer;
+	int m_health, m_targetnode = 1, m_alivetimer = 0, hitTimer;
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
 	Sprite* m_sword;
@@ -60,7 +60,8 @@ private:
 		m_maxVelX,
 		m_velY,
 		m_maxVelY, 
-		destAngle;
+		destAngle, 
+		m_dirtionXCheck;
 	glm::vec2 m_ePos;
 	glm::vec2 m_Vel;
 	int m_iLOS, alarm;
