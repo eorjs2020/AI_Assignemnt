@@ -52,8 +52,7 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b, std::v
 	switch (m_state)
 	{
 	case idle:
-		if (a)
-		{
+		
 			if (this->m_dst.x < (b[m_targetnode]->GetPos().x - 16)) {
 				++m_dst.x;
 			}
@@ -71,8 +70,6 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b, std::v
 					m_targetnode = 0;
 				++m_targetnode;
 			}
-
-		}
 		
 		if (!m_bLOS && m_bSearch)
 		{
@@ -377,8 +374,7 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b, std::v
 	switch (m_state)
 	{
 	case idle:
-		if (a)
-		{
+		
 			if (this->m_dst.x < (b[m_targetnode]->GetPos().x - 16)) {
 				++m_dst.x;
 			}
@@ -397,7 +393,7 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b, std::v
 				++m_targetnode;
 			}
 
-		}
+	
 		
 		if (!m_bLOS && m_bSearch)
 		{

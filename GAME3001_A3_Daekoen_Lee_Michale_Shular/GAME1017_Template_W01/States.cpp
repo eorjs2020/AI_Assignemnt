@@ -641,16 +641,17 @@ void PlayState::m_buildPatrolPath()
 	}
 	std::cout << "Number of Nodes for path One: " << m_pPatrolPathOne.size() << std::endl;
 	//Path two
-	for (auto i = 23; i > 20; i--)
+	for (auto i = 23; i > 18; i--)
 	{
-		m_pPatrolPathTwo.push_back(m_pGrid[(32 * i - 2)]);
+		m_pPatrolPathTwo.push_back(m_pGrid[(32 * i - 14)]);
 	}
 	std::cout << "Number of Nodes for path two: " << m_pPatrolPathTwo.size() << std::endl;
 	//Paht three
-		m_pPatrolPathThree.push_back(m_pGrid[240]);
-		m_pPatrolPathThree.push_back(m_pGrid[230]);
-		m_pPatrolPathThree.push_back(m_pGrid[253]);
-		m_pPatrolPathThree.push_back(m_pGrid[320]);
+	for (auto i = 15; i > 9; i--)
+	{
+		m_pPatrolPathThree.push_back(m_pGrid[(32 * i - 4)]);
+		m_pPatrolPathThree.push_back(m_pGrid[(32 * i - 5)]);
+	}
 	std::cout << "Number of Nodes for path three: " << m_pPatrolPathThree.size() << std::endl;
 	//Path Four
 	m_pPatrolPathFour.push_back(m_pGrid[245]);
