@@ -44,9 +44,9 @@ private:
 		a_chasing,
 		melee_attack
 	} attacksate;
-	bool m_dir, m_alive = true, m_canHit;
+	bool m_dir, m_alive = true, m_canHit, m_wait;
 	void SetState(int s);
-	int m_health, m_targetnode = 1, m_alivetimer = 0, hitTimer;
+	int m_health, m_targetnode = 1, m_alivetimer = 0, hitTimer, m_waitingTimer, m_waitingTimerCheck;
 	Sprite* m_healthBarGreen;
 	Sprite* m_healthBarRed;
 	Sprite* m_sword;

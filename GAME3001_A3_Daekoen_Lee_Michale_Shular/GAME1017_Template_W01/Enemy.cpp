@@ -4,6 +4,7 @@
 #include "Engine.h"
 #include "TextureManager.h"
 #include "SoundManager.h"
+#include <ctime>
 
 MeleeEnemy::MeleeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Tile*> obs,int sstart, int smin, int smax, int nf)
 	:AnimatedSprite(s, d, r, t, sstart, smin, smax, nf), m_state(idle), m_dir(0) {
@@ -24,6 +25,9 @@ MeleeEnemy::MeleeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t,
 	destAngle = 0;
 	m_canHit = true;
 	hitTimer = 0;
+	srand(unsigned int(time));
+	m_wait = false;
+	m_waitingTimerCheck = m_waitingTimer = 0;
 }
 
 MeleeEnemy::~MeleeEnemy()
@@ -89,7 +93,15 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			if (COMA::AABBCheck(*player->GetDstP(), *this->GetDstP())){
 				attacksate = melee_attack;
 			}
-
+			if (m_wait)
+			{
+				++m_waitingTimer;
+				if(m_waitingTimer >= m_waitingTimerCheck){
+					m_wait = false;
+					m_waitingTimer = 0;
+				}
+				break;
+			}
 			
 			/*	if(HasLineofSight())
 					Move2Full(destAngle);
@@ -138,6 +150,8 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 					m_canHit = true;
 					attacksate = a_chasing;
 					m_sword = nullptr;
+					m_waitingTimerCheck = rand() % 30;
+					m_wait = true;
 				}
 				
 			}
