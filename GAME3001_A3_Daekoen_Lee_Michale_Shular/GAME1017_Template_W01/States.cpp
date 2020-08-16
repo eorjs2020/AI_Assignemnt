@@ -83,10 +83,9 @@ void PlayState::Enter()
 		Engine::Instance().GetLevel()[4][5]->GetDstP()->y,32.0f,32.0f },
 		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile")));
 
-	m_RangeEnemy.push_back(new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathThree[0]->GetPos().x, m_pPatrolPathThree[0]->GetPos().y ,32.0f,32.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"),&m_pEnemyBullet ,m_pObstacle, 0, 0, 3, 4));
+
 	m_RangeEnemy.push_back(new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathFour[0]->GetPos().x, m_pPatrolPathFour[0]->GetPos().y ,32.0f,32.0f },
-		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4));
+		Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), & m_pEnemyBullet, m_pObstacle, 0, 0, 3, 4));
 
 	TempPForEnemyPath = &m_pPatrolPathOne;
 	std::cout << "Number of Nodes: " << m_pGrid.size() << std::endl;
@@ -297,7 +296,7 @@ void PlayState::Update()
 		}
 	
 		if (m_Enemy[0] != nullptr) {
-			m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne);
+			m_Enemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathOne, m_HidingNode);
 			m_winCondition[0] = false;
 		}
 		//Enemy respawn reset timer and position 
@@ -312,7 +311,7 @@ void PlayState::Update()
 			}
 		}
 		if (m_Enemy[1] != nullptr) {
-			m_Enemy[1]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathTwo);
+			m_Enemy[1]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathTwo, m_HidingNode);
 			m_winCondition[1] = false;
 		}
 		//Enemy respawn reset timer and position 
@@ -327,7 +326,7 @@ void PlayState::Update()
 			}
 		}
 		if (m_Enemy[2] != nullptr) {
-			m_Enemy[2]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathThree);
+			m_Enemy[2]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathThree, m_HidingNode);
 			m_winCondition[2] = false;
 		}
 		//Enemy respawn reset timer and position 
@@ -342,7 +341,7 @@ void PlayState::Update()
 			}
 		}
 		if (m_RangeEnemy[0] != nullptr) {
-			m_RangeEnemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathFour);
+			m_RangeEnemy[0]->Update(m_pPlayer, m_PatrolMode, m_pPatrolPathFour, m_HidingNode);
 			m_winCondition[3] = false;
 		}
 		//Enemy respawn reset timer and position 
@@ -351,7 +350,7 @@ void PlayState::Update()
 			m_winCondition[3] = true;
 			if (m_enemyRespawnTimer[3] >= 600) {
 				m_RangeEnemy[0] = new RangeEnemy({ 0,194,14,21 }, { m_pPatrolPathFour[targetNode + 1]->GetPos().x, m_pPatrolPathFour[targetNode + 1]->GetPos().y ,32.0f,32.0f },
-					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), m_pObstacle, 0, 0, 3, 4);
+					Engine::Instance().GetRenderer(), TEMA::GetTexture("Tile"), & m_pEnemyBullet, m_pObstacle, 0, 0, 3, 4);
 				m_RangeEnemy[0]->SetDstXY(m_pPatrolPathFour[0]->GetPos().x - 15, m_pPatrolPathFour[0]->GetPos().y - 16);
 				m_enemyRespawnTimer[3] = 0;
 			}
@@ -440,6 +439,15 @@ void PlayState::Render()
 					{ Uint8(LOSColour.r), Uint8(LOSColour.g), Uint8(LOSColour.b), Uint8(LOSColour.a) });
 				m_Enemy[i]->RenderRadius(100, m_Enemy[i]->GetDstP()->x + m_Enemy[i]->GetDstP()->w / 2, m_Enemy[i]->GetDstP()->y + m_Enemy[i]->GetDstP()->h / 2);
 			}
+			
+		}
+		if (m_RangeEnemy[0] != nullptr)
+		{
+			auto LOSColour = (RangeHasLos()) ? glm::vec4(255.0f, 0.0f, 0.0f, 1.0f) : glm::vec4(0.0f, 255.0f, 0.0f, 1.0f);
+			DEMA::DrawLine({ int(m_pPlayer->GetDstP()->x + m_pPlayer->GetDstP()->w / 2), int(m_pPlayer->GetDstP()->y + m_pPlayer->GetDstP()->h / 2) },
+				{ int(m_RangeEnemy[0]->GetDstP()->x + m_RangeEnemy[0]->GetDstP()->w / 2), int(m_RangeEnemy[0]->GetDstP()->y + m_RangeEnemy[0]->GetDstP()->h / 2) },
+				{ Uint8(LOSColour.r), Uint8(LOSColour.g), Uint8(LOSColour.b), Uint8(LOSColour.a) });
+			m_RangeEnemy[0]->RenderRadius(250, m_RangeEnemy[0]->GetDstP()->x + m_RangeEnemy[0]->GetDstP()->w / 2, m_RangeEnemy[0]->GetDstP()->y + m_RangeEnemy[0]->GetDstP()->h / 2);
 		}
 	}
 	//RenderLOS();
@@ -685,6 +693,20 @@ bool PlayState::EnemyHasLOS(int n)
 		
 	}
 	m_Enemy[n]->SetLineofSight(false);
+	return false;
+}
+
+bool PlayState::RangeHasLos()
+{
+	for (auto i = 0; i < m_pLOSobs.size(); ++i)
+	{
+		if (!COMA::LOSCheck(m_pPlayer, m_RangeEnemy[0], &m_pLOSobs[i]))
+		{
+			m_RangeEnemy[0]->SetLineofSight(true);
+			return true;
+		}
+	}
+	m_RangeEnemy[0]->SetLineofSight(false);
 	return false;
 }
 

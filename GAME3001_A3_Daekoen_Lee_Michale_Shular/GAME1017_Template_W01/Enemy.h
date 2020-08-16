@@ -16,7 +16,7 @@ class MeleeEnemy : public AnimatedSprite
 public:
 	MeleeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Tile*> obs ,int sstart, int smin, int smax, int nf);
 	~MeleeEnemy();
-	void Update(Player* player, bool a, std::vector<PathNode*> b);
+	void Update(Player* player, bool a, std::vector<PathNode*> b, std::vector<PathNode*> hiding);
 	void Render();
 	int getHealth() { return m_health; }
 	void setHealth(int a) { m_health += a; }
@@ -76,7 +76,7 @@ public:
 public:
 	RangeEnemy(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, std::vector<Bullet*>* EB , std::vector<Tile*> obs, int sstart, int smin, int smax, int nf);
 	~RangeEnemy();
-	void Update(Player* player, bool a, std::vector<PathNode*> b);
+	void Update(Player* player, bool a, std::vector<PathNode*> b, std::vector<PathNode*> hiding);
 	void Render();
 	int getHealth() { return m_health; }
 	void setHealth(int a) { m_health += a; }

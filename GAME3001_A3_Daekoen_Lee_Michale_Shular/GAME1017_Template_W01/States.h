@@ -79,6 +79,7 @@ public:
 	void m_displayPatrolPath();
 	bool LOSNode(int n);
 	bool EnemyHasLOS(int n);
+	bool RangeHasLos();
 };
 
 class StartState :public State

@@ -34,7 +34,7 @@ MeleeEnemy::~MeleeEnemy()
 {
 }
 
-void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
+void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b, std::vector<PathNode*> hiding)
 {
 	dx = dy = 0.0f;
 	m_rSearch.x = (m_dst.x + m_dst.w /2) - 100 ;
@@ -104,11 +104,12 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 				}
 				break;
 			}
-			
+			destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
+				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
 			/*	if(HasLineofSight())
 					Move2Full(destAngle);
 				else*/
-		
+			MAMA::SetDeltas(destAngle, dx, dy, 2.0, 2.0);
 			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, dx, 0))
 				GetDstP()->x += dx;
 			else
@@ -165,28 +166,47 @@ void MeleeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			break;
 		}
 	case flee:
-		if (m_health < 10)
+		if (m_health < 10 && MAMA::Distance(m_dst.x, tempP.x, m_dst.y, tempP.y) < 150)
 		{
 			destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
 				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
-			MAMA::SetDeltas(destAngle, dx, dy, 2.0, 2.0);
+			MAMA::SetDeltas(destAngle, dx, dy, -2.0, -2.0);
 
 			/*	if(HasLineofSight())
 					Move2Full(destAngle);
 				else*/
 
-			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, dx, 0))
-				GetDstP()->x += -dx;
-		
-			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, 0, dy))
-				GetDstP()->y += -dy;
-		
+
+
+		}
+		else if (m_health < 10 && MAMA::Distance(m_dst.x, tempP.x, m_dst.y, tempP.y) > 150)
+		{
+			for (auto i = 0; i < hiding.size(); ++i)
+			{
+				if (!hiding[i]->getLOS())
+				{
+					std::cout << "aa" << std::endl;
+					destAngle = MAMA::AngleBetweenPoints((hiding[i]->GetPos().y + hiding[i]->GetHeight() / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
+						(hiding[i]->GetPos().x + hiding[i]->GetWidth() / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
+					MAMA::SetDeltas(destAngle, dx, dy, 2.0, 2.0);
+					break;
+				}
+			}
+
 		}
 		else
 			break;
-	
+		if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, dx, 0))
+			GetDstP()->x += dx;
+		else
+			GetDstP()->y += dx;
+		if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, 0, dy))
+			GetDstP()->y += dy;
+		else
+			GetDstP()->x += dy;
 		break;
 
+		break;
 	case death:
 		++m_alivetimer;
 		if (m_alivetimer >= 17) {
@@ -340,7 +360,7 @@ RangeEnemy::~RangeEnemy()
 {
 }
 
-void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
+void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b, std::vector<PathNode*> hiding)
 {
 	dx = dy = 0.0f;
 	m_rSearch.x = (m_dst.x + m_dst.w / 2) - 100;
@@ -348,7 +368,7 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 	m_rSearch.w = 200;
 	m_rSearch.h = 200;
 	SDL_FRect tempP = { player->GetDstP()->x, player->GetDstP()->y, player->GetDstP()->w, player->GetDstP()->h };
-	m_bSearch = COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 300, tempP);
+	m_bSearch = COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 250, tempP);
 	m_dirtionXCheck = m_dst.x;
 	if (m_health <= 0)
 	{
@@ -381,7 +401,7 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 		
 		if (!m_bLOS && m_bSearch)
 		{
-			//std::cout << "search" << std::endl;;
+			std::cout << "search" << std::endl;;
 			m_state = chasing;
 		}
 		break;
@@ -392,15 +412,15 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 		{
 			m_state = flee;
 		}
-		destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
-			(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
+		
 		switch (attacksate)
 		{
 		case a_chasing:
-			if (COMA::CircleAABBCheck({ m_rSearch.x + m_rSearch.w / 2, m_rSearch.y + m_rSearch.h / 2 }, 300, tempP) && !HasLineofSight()) {
+			if (COMA::CircleAABBCheck({ m_dst.x + m_dst.w / 2, m_dst.y + m_dst.h / 2 }, 250, tempP) && !HasLineofSight()) {
 				attacksate = Ranged_attack;
 			}
-
+			destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
+				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
 
 			/*	if(HasLineofSight())
 					Move2Full(destAngle);
@@ -409,8 +429,12 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 
 			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, dx, 0))
 				GetDstP()->x += dx;
+			else
+				GetDstP()->y += dx;
 			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, 0, dy))
 				GetDstP()->y += dy;
+			else
+				GetDstP()->x += dy;
 			break;
 		case Ranged_attack:
 			if (m_sword == nullptr) {
@@ -463,7 +487,45 @@ void RangeEnemy::Update(Player* player, bool a, std::vector<PathNode*> b)
 			break;
 		}
 	case flee:
+		if (m_health < 10 && MAMA::Distance(m_dst.x, tempP.x, m_dst.y, tempP.y) < 150)
+		{
+			destAngle = MAMA::AngleBetweenPoints((player->GetDstP()->y + player->GetDstP()->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
+				(player->GetDstP()->x + player->GetDstP()->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
+			MAMA::SetDeltas(destAngle, dx, dy, -2.0, -2.0);
 
+			/*	if(HasLineofSight())
+					Move2Full(destAngle);
+				else*/
+
+		
+
+		}
+		else if (m_health < 10 && MAMA::Distance(m_dst.x, tempP.x, m_dst.y, tempP.y) > 150)
+		{
+			for (auto i = 0; i < hiding.size(); ++i)
+			{
+				if (!hiding[i]->getLOS())
+				{
+					std::cout << "aa" << std::endl;
+ 					destAngle = MAMA::AngleBetweenPoints((hiding[i]->GetPos().y + hiding[i]->GetHeight() / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f) + y,
+						(hiding[i]->GetPos().x + hiding[i]->GetWidth() / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f) + x);
+					MAMA::SetDeltas(destAngle, dx, dy, 2.0, 2.0);
+					break;
+				}
+			}
+		
+		}
+		else
+			break;
+		if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, dx, 0))
+			GetDstP()->x += dx;
+		else
+			GetDstP()->y += dx;
+		if (!COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)m_dst.w, (int)m_dst.h }, 0, dy))
+			GetDstP()->y += dy;
+		else
+			GetDstP()->x += dy;
+		break;
 
 		break;
 
